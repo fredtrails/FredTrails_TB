@@ -154,6 +154,7 @@
     var app;
     require(["esri/Map",
       "esri/Basemap",
+      "esri/layers/FeatureLayer",
       "esri/views/MapView",
       "esri/views/SceneView",
       "esri/widgets/Search",
@@ -167,7 +168,7 @@
       // Calcite-maps
       "calcite-maps/calcitemaps-v0.3",
       "dojo/domReady!"
-    ], function(Map, Basemap, MapView, SceneView, Search, watchUtils, query) {
+    ], function(Map, Basemap, FeatureLayer, MapView, SceneView, Search, watchUtils, query) {
         
       // App
       app = {
@@ -220,6 +221,40 @@
       app.activeView.then(function() {
         app.initialExtent = app.activeView.extent;
       });
+
+      /********************
+         * Add feature layer
+         ********************/
+
+        // Workforce layer
+        var surveyNeedsWork = new FeatureLayer({
+          url: "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/survey123_3ce3df673f9b431ea009efeb3ceab69f/FeatureServer"
+        });
+
+        // Survey layer
+        var NoiseLayer = new FeatureLayer({
+          url: "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/survey123_133eb4b36d784f06a0f6ddfef527a560/FeatureServer"
+        });
+
+        //  layer
+        var workforceAssignments = new FeatureLayer({
+          url: "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/assignments_5d191713b63a41caa404abb03e259931/FeatureServer"
+        });
+
+        //  layer
+        var buildings = new FeatureLayer({
+          url: "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/SRA_Buildings/FeatureServer"
+        });
+
+
+        
+        map.add(buildings);
+        map.add(surveyNeedsWork);
+        map.add(NoiseLayer);
+        map.add(workforceAssignments);
+        
+
+
       // Search Widgets
       app.searchWidgetNav = createSearchWidget("searchNavDiv");
       function createSearchWidget(parentId) {
