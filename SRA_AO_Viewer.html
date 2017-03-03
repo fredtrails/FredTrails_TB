@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>SRA AO Viewer</title>
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+    
+    #elevationDiv {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 12px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+    }
+
+    a{
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover{
+      color: red;
+    }
+
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.2/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.2/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/SceneView",
+      "esri/layers/FeatureLayer",
+
+      "dojo/on",
+      "dojo/dom",
+      "dojo/domReady!"
+    ], function(Map, SceneView, FeatureLayer, on, dom) {
+
+      // Create the Map
+      var map = new Map({
+        basemap: "satellite",
+        ground: "world-elevation"
+      });
+
+      // Create the SceneView
+      var view = new SceneView({
+        container: "viewDiv",
+        map: map,
+        camera: {
+          position: [-77.455093,38.397833, 20000],
+          heading: 20,
+          tilt: 0
+        }
+      });
+
+      // Create FeatureLayer, set the elevation mode and add to the map
+      var AOs = new FeatureLayer({
+        url: "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Aerial_Obstruction/FeatureServer/0",
+        elevationInfo: {
+          mode: "relative-to-ground",
+          offset: 500
+        }
+      });
+
+      var runway = new FeatureLayer({
+        url: "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Runway/FeatureServer/0",
+        elevationInfo: {
+          mode: "relative-to-ground",
+          offset: 20
+        }
+      });
+
+      map.add(AOs, runway);
+
+      // Register events to the controls
+      var offsetInput = dom.byId("offsetInput");
+      on(dom.byId("modeSelect"), "change", updateElevationMode);
+      on(offsetInput, "blur", updateElevationOffset);
+      on(offsetInput, "keypress", elevationOffsetKeypress);
+
+      // Create events' callback functions
+      function updateElevationMode(ev) {
+        var select = ev.target;
+        var mode = select.options[select.selectedIndex].value;
+
+        if (mode === "relative-to-ground") {
+          offsetInput.removeAttribute("disabled");
+        } else {
+          offsetInput.setAttribute("disabled", "true");
+        }
+
+        layer.elevationInfo = {
+          mode: mode,
+          offset: layer.elevationInfo.offset
+        };
+      }
+
+      function updateElevationOffset() {
+        var offset;
+
+        try {
+          offset = parseFloat(offsetInput.value, 10);
+        } catch (e) {
+          return;
+        }
+
+        layer.elevationInfo = {
+          mode: layer.elevationInfo.mode,
+          offset: offset
+        };
+      }
+
+      function elevationOffsetKeypress(ev) {
+        if (ev.which === 13) {
+          updateElevationOffset();
+        }
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv"></div>
+  <div id="elevationDiv">
+    <table>
+      <tr>
+        <td>Mode:</td>
+        <td>
+          <select id="modeSelect">
+            <option value="relative-to-ground">Relative to ground</option>
+            <option value="on-the-ground">On to ground</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>Offset:</td>
+        <td><input id="offsetInput" type="text" size="5" value="500"></td>
+      </tr>
+    </table>
+    <br>
+    <a href="SRA_Editor.html" target="_blank">Editor the Aerial Obstructions layer</a>
+  </div>
+</body>
+</html>
