@@ -90,9 +90,12 @@
 
         map.on("layers-add-result", initEditor);
 
-        //add boundaries and place names
-        var labels = new ArcGISTiledMapServiceLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer");
-        map.addLayer(labels);
+        
+
+        var runway = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Extruded_Runway_WFL/FeatureServer/0", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          outFields: ['*']
+        });
 
         var obstructionsPoints = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Aerial_Obstruction/FeatureServer/0", {
           mode: FeatureLayer.MODE_ONDEMAND,
@@ -102,7 +105,7 @@
         
        
 
-        map.addLayers([obstructionsPoints]);
+        map.addLayers([obstructionsPoints, runway]);
 
         function initEditor(evt) {
           var templateLayers = arrayUtils.map(evt.layers, function(result){

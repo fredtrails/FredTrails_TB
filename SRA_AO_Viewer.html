@@ -76,14 +76,11 @@
       });
 
       var runway = new FeatureLayer({
-        url: "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Runway/FeatureServer/0",
-        elevationInfo: {
-          mode: "relative-to-ground",
-          offset: 20
-        }
+        url: "http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Extruded_Runway_WFL/FeatureServer/0"
       });
 
-      map.add(AOs, runway);
+      map.add(AOs);
+      map.add(runway);
 
       // Register events to the controls
       var offsetInput = dom.byId("offsetInput");
@@ -102,9 +99,9 @@
           offsetInput.setAttribute("disabled", "true");
         }
 
-        layer.elevationInfo = {
+          AOs.elevationInfo = {
           mode: mode,
-          offset: layer.elevationInfo.offset
+          offset: AOs.elevationInfo.offset
         };
       }
 
@@ -117,8 +114,8 @@
           return;
         }
 
-        layer.elevationInfo = {
-          mode: layer.elevationInfo.mode,
+          AOs.elevationInfo = {
+          mode: AOs.elevationInfo.mode,
           offset: offset
         };
       }
@@ -146,7 +143,7 @@
         </td>
       </tr>
       <tr>
-        <td>Offset:</td>
+        <td>Offset (Meters):</td>
         <td><input id="offsetInput" type="text" size="5" value="500"></td>
       </tr>
     </table>
