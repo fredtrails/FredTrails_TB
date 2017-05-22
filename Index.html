@@ -5,10 +5,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
-    <title>Edit SRA AOs</title>
+    <title>SRA IMS</title>
 
-    <link rel="stylesheet" href="https://js.arcgis.com/3.19/dijit/themes/claro/claro.css">
-    <link rel="stylesheet" href="https://js.arcgis.com/3.19/esri/css/esri.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.20/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.20/esri/css/esri.css">
     <style>
       html,body{height:100%;width:100%;margin:0;overflow:hidden; background-color: green;}
       #map{
@@ -42,7 +42,7 @@
       .dj_ie .simpleInfoWindow .content { position: relative; background-color: green; }
     </style>
 
-    <script src="https://js.arcgis.com/3.19/"></script>
+    <script src="https://js.arcgis.com/3.20/"></script>
     <script>
       var map;
 
@@ -65,7 +65,7 @@
 
         "dojo/_base/array", "dojo/parser", "dojo/keys",
 
-        "dijit/layout/BorderContainer", "dijit/layout/ContentPane",
+        "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dijit/layout/AccordionContainer",
         "dojo/domReady!"
       ], function(
         Map, GeometryService,
@@ -73,7 +73,7 @@
         Color, SimpleMarkerSymbol, SimpleLineSymbol,
         Editor, TemplatePicker,
         esriConfig, jsapiBundle,
-        arrayUtils, parser, keys
+        arrayUtils, parser, keys, ContentPane, AccordionContainer
       ) {
         parser.parse();
 
@@ -108,76 +108,39 @@
 
         map.addLayers([obstructionsPoints, runway]);
 
-        function initEditor(evt) {
-          // Instead of running this function to get an array of layers, I just created an array of the layers I want in the editor
-          //var templateLayers = arrayUtils.map(evt.layers, function(result){
-            //return result.layer;
-          //});
-          var templatePicker = new TemplatePicker({
-            featureLayers: [obstructionsPoints],
-            grouping: true,
-            rows: "auto",
-            columns: 3
-          }, "templateDiv");
-          templatePicker.startup();
 
-          var layers = arrayUtils.map(evt.layers, function(result) {
-            return { featureLayer: result.layer };
-          });
-          var settings = {
-            map: map,
-            templatePicker: templatePicker,
-            layerInfos: layers,
-            toolbarVisible: true,
-            createOptions: {
-              polylineDrawTools:[ Editor.CREATE_TOOL_FREEHAND_POLYLINE ],
-              polygonDrawTools: [ Editor.CREATE_TOOL_FREEHAND_POLYGON,
-                Editor.CREATE_TOOL_CIRCLE,
-                Editor.CREATE_TOOL_TRIANGLE,
-                Editor.CREATE_TOOL_RECTANGLE
-              ]
-            },
-            toolbarOptions: {
-              reshapeVisible: true
-            }
-          };
 
-          var params = { settings: settings };
-          var myEditor = new Editor(params, 'editorDiv');
-          //define snapping options
-          var symbol = new SimpleMarkerSymbol(
-            SimpleMarkerSymbol.STYLE_CROSS,
-            15,
-            new SimpleLineSymbol(
-              SimpleLineSymbol.STYLE_SOLID,
-              new Color([255, 0, 0, 0.5]),
-              5
-            ),
-            null
-          );
-          map.enableSnapping({
-            snapPointSymbol: symbol,
-            tolerance: 20,
-            snapKey: keys.ALT
-          });
-
-          myEditor.startup();
-        }
       });
     </script>
   </head>
   <body class="claro">
     <div id="main" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline'" style="height:width:100%;height:100%;">
       <div data-dojo-type="dijit/layout/ContentPane" id="header" data-dojo-props="region:'top'">
-        Edit Aerial Obstructions Layer
+        Stafford Regional Airport Information Management System
       </div>
       <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left'" style="width: 300px;overflow:hidden; background-color: green; color:white;">
         <div id="description">
-          Use this editor to add or delete possible aerial obstructions within the vicinity <br><br>
+        	<a href="http://www.staffordairport.com/" target="_blank">
+        		<img src="sra_logo.png" style="display: block; margin: auto;">
+        	</a>
+
+        <br><br>
         </div>
         <div id="editorDivContainer" style="color: black;">
-          <div id="templateDiv"></div>
-          <div id="editorDiv"></div>
+        <div style="width: 300px; height: 300px">
+		    <div data-dojo-type="dijit/layout/AccordionContainer" style="height: 300px;">
+		        <div data-dojo-type="dijit/layout/ContentPane" title="Weather" selected="true">
+		            <span style="display: block !important; width: 300px; text-align: center; font-family: sans-serif; font-size: 12px;"><a href="http://www.wunderground.com/cgi-bin/findweather/getForecast?query=zmw:22554.1.99999&bannertypeclick=wu_clean2day" title="Stafford, Virginia Weather Forecast" target="_blank"><img src="http://weathersticker.wunderground.com/weathersticker/cgi-bin/banner/ban/wxBanner?bannertype=wu_clean2day_cond&airportcode=KRMN&ForcedCity=Stafford&ForcedState=VA&zip=22554&language=EN" alt="Find more about Weather in Stafford, VA" width="300" /></a><br><a href="http://www.wunderground.com/cgi-bin/findweather/getForecast?query=zmw:22554.1.99999&bannertypeclick=wu_clean2day" title="Get latest Weather Forecast updates" style="font-family: sans-serif; font-size: 12px" target="_blank">Click for weather forecast</a></span>
+		        </div>
+		        <div data-dojo-type="dijit/layout/ContentPane" title="This is as well">
+		            Hi how are you?
+		        </div>
+		        <div data-dojo-type="dijit/layout/ContentPane" title="This too">
+		            Hi how are you? .....Great, thx
+		        </div>
+		    </div>
+		</div>
+          
           <br><br>
           <a target="_blank" href="SRA_AO_Viewer.html">Check out this layer in 3D</a>
         </div>
