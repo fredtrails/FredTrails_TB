@@ -7,7 +7,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
     <title>SRA IMS</title>
 
-    <link rel="stylesheet" href="https://js.arcgis.com/3.20/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.20/dijit/themes/nihilo/nihilo.css">
     <link rel="stylesheet" href="https://js.arcgis.com/3.20/esri/css/esri.css">
     <style>
       html,body{height:100%;width:100%;margin:0;overflow:hidden; background-color: green;}
@@ -47,6 +47,8 @@
       var map;
 
       require([
+      	"dojo/dom",
+        "dojo/dom-construct",
         "esri/map",
         "esri/tasks/GeometryService",
 
@@ -59,6 +61,16 @@
 
         "esri/dijit/editing/Editor",
         "esri/dijit/editing/TemplatePicker",
+        "esri/dijit/LayerList",
+        "esri/arcgis/utils",
+		"esri/urlUtils",
+		"esri/dijit/Measurement",
+		"esri/layers/ArcGISDynamicMapServiceLayer",
+
+		"esri/dijit/Popup",
+        "esri/dijit/PopupTemplate",
+
+
 
         "esri/config",
         "dojo/i18n!esri/nls/jsapi",
@@ -68,10 +80,11 @@
         "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dijit/layout/AccordionContainer",
         "dojo/domReady!"
       ], function(
-        Map, GeometryService,
+        dom, domConstruct, Map, GeometryService,
         ArcGISTiledMapServiceLayer, FeatureLayer,
         Color, SimpleMarkerSymbol, SimpleLineSymbol,
-        Editor, TemplatePicker,
+        Editor, TemplatePicker, LayerList, arcgisUtils, urlUtils, Measurement, ArcGISDynamicMapServiceLayer,
+        Popup, PopupTemplate,
         esriConfig, jsapiBundle,
         arrayUtils, parser, keys, ContentPane, AccordionContainer
       ) {
@@ -80,69 +93,147 @@
         // snapping is enabled for this sample - change the tooltip to reflect this
         jsapiBundle.toolbars.draw.start = jsapiBundle.toolbars.draw.start +  "<br>Press <b>ALT</b> to enable snapping";
 
-        
+        var popupOptions = {
+            marginLeft: "20",
+            marginTop: "20"
+         };
 
+        //create a popup to replace the map's info window
+        var popup = new Popup(popupOptions, domConstruct.create("div"));
 
+        // Create the Map object
         map = new Map("map", {
           basemap: "satellite",
-          center: [-77.455093,38.397833],
-          zoom: 12
+          center: [-77.455093,38.398820],
+          zoom: 15
         });
 
-        map.on("layers-add-result", initEditor);
+        // Popup template
+        var popupTemplate = new PopupTemplate({
+            title: "Feature Info",
+            
+            showAttachments: true
+          });
 
-        
+         // Carbon storage of trees in Warren Wilson College.
+	    var runway = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Extruded_Runway_WFL/FeatureServer/0",{
+			mode: FeatureLayer.MODE_ONDEMAND, 
+			id: "Runway",
+			infoTemplate: popupTemplate,
+			outFields: ['*']
+		});
 
-        var runway = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Extruded_Runway_WFL/FeatureServer/0", {
-          mode: FeatureLayer.MODE_ONDEMAND,
-          outFields: ['*']
+
+	    var fence = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/SRA_Fence_Line/FeatureServer/0",{
+			mode: FeatureLayer.MODE_ONDEMAND, 
+			infoTemplate: popupTemplate,
+			id: "Fence Line",
+			outFields: ['*']
+		});
+
+	    var buildings = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/SRA_Buildings/FeatureServer/0",{
+			mode: FeatureLayer.MODE_ONDEMAND, 
+			infoTemplate: popupTemplate,
+			id: "Buildings",
+			outFields: ['*']
+		});
+
+	    var issues = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/survey123_3ce3df673f9b431ea009efeb3ceab69f/FeatureServer/0",{
+			mode: FeatureLayer.MODE_ONDEMAND, 
+			id: "Hot Fix Needed",
+			infoTemplate: popupTemplate,
+			outFields: ['*']
+		});
+
+		var fuel = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Wet_Fuel_Storage/FeatureServer/0",{
+			mode: FeatureLayer.MODE_ONDEMAND, 
+			id: "Wet Fuel Storage",
+			infoTemplate: popupTemplate,
+			outFields: ['*']
+		});
+
+		
+
+		var traffic = new ArcGISDynamicMapServiceLayer("http://utility.arcgis.com/usrsvcs/servers/8cd01a89cdc74c87893127f4438844b5/rest/services/World/Traffic/MapServer", {
+          "opacity" : 0.5,
+          "visible" : false        
         });
+	    
 
-        var obstructionsPoints = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Aerial_Obstruction/FeatureServer/0", {
-          mode: FeatureLayer.MODE_ONDEMAND,
-          outFields: ['*']
-        });
+	    map.addLayers([runway, fence, buildings, fuel, issues, traffic]);
 
-        
-       
+	    // Isolate basemap layer so we can rename it for the layer list widget
+	    var bmLayerID = map.getLayer(map.layerIds[0]);
 
-        map.addLayers([obstructionsPoints, runway]);
+	    // Layer list object for ListLayer widget
+		var LL = [{layer: bmLayerID, id:"Basemap"},{layer: runway},{layer: fence},{layer: buildings},{layer: issues}, {layer: fuel},];
+
+		// Layer List Widget
+		var trafficWiget = new LayerList({
+           map: map,
+           layers: [{layer: traffic, id:"Live Traffic"},],
+           showOpacitySlider: true,
+           showLegend: true
+        },"trafficWigetDiv");	
+        trafficWiget.startup(); 
+
+	    // Layer List Widget
+		var myWidget = new LayerList({
+           map: map,
+           layers: LL,
+           showOpacitySlider: true,
+           showLegend: true
+        },"layerList");	
+        myWidget.startup();  
+
+        // measurement widget
+        var measurement = new Measurement({
+          map: map
+        },"measurementDiv");
+        measurement.startup();  
+
 
 
 
       });
     </script>
   </head>
-  <body class="claro">
+  <body class="nihilo">
     <div id="main" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline'" style="height:width:100%;height:100%;">
-      <div data-dojo-type="dijit/layout/ContentPane" id="header" data-dojo-props="region:'top'">
-        Stafford Regional Airport Information Management System
+      <div data-dojo-type="dijit/layout/ContentPane" id="header" data-dojo-props="region:'top'" style="background-color: #f2f0e4; color: black; height: 65px">
+       <a href="http://www.staffordairport.com/" target="_blank">
+        	<img src="sra_logo.png">
+        </a>
+        Information Management System
       </div>
-      <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left'" style="width: 300px;overflow:hidden; background-color: green; color:white;">
+      <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left'" style="width: 310px;overflow:hidden; background-color: #f2f0e4; color: black;">
         <div id="description">
-        	<a href="http://www.staffordairport.com/" target="_blank">
-        		<img src="sra_logo.png" style="display: block; margin: auto;">
-        	</a>
-
         <br><br>
         </div>
         <div id="editorDivContainer" style="color: black;">
-        <div style="width: 300px; height: 300px">
-		    <div data-dojo-type="dijit/layout/AccordionContainer" style="height: 300px;">
-		        <div data-dojo-type="dijit/layout/ContentPane" title="Weather" selected="true">
+        <div style="width: 310px; height: 300px">
+		    <div data-dojo-type="dijit/layout/AccordionContainer" style="height: 500px;">
+		        <div data-dojo-type="dijit/layout/ContentPane" title="Weather Conditions & Traffic" selected="true">
 		            <span style="display: block !important; width: 300px; text-align: center; font-family: sans-serif; font-size: 12px;"><a href="http://www.wunderground.com/cgi-bin/findweather/getForecast?query=zmw:22554.1.99999&bannertypeclick=wu_clean2day" title="Stafford, Virginia Weather Forecast" target="_blank"><img src="http://weathersticker.wunderground.com/weathersticker/cgi-bin/banner/ban/wxBanner?bannertype=wu_clean2day_cond&airportcode=KRMN&ForcedCity=Stafford&ForcedState=VA&zip=22554&language=EN" alt="Find more about Weather in Stafford, VA" width="300" /></a><br><a href="http://www.wunderground.com/cgi-bin/findweather/getForecast?query=zmw:22554.1.99999&bannertypeclick=wu_clean2day" title="Get latest Weather Forecast updates" style="font-family: sans-serif; font-size: 12px" target="_blank">Click for weather forecast</a></span>
+		            <br><br>
+		            Turn this layer on to view live traffic conditions around Stafford Regional Airport.
+		            <br><br>
+		            <div id="trafficWigetDiv"></div>
 		        </div>
-		        <div data-dojo-type="dijit/layout/ContentPane" title="This is as well">
-		            Hi how are you?
+		        <div data-dojo-type="dijit/layout/ContentPane" title="Installation Maintenance">
+		            <div id="layerList"></div>
+		            <br><br>
+		            <div id="measurementDiv"></div>
 		        </div>
-		        <div data-dojo-type="dijit/layout/ContentPane" title="This too">
-		            Hi how are you? .....Great, thx
+		        <div data-dojo-type="dijit/layout/ContentPane" title="Aerial Obstructions">
+		        	<br><br>
+		            <a target="_blank" href="SRA_AO_Viewer.html">Check out this layer in 3D</a>
 		        </div>
 		    </div>
 		</div>
           
           <br><br>
-          <a target="_blank" href="SRA_AO_Viewer.html">Check out this layer in 3D</a>
+          
         </div>
       </div>
       <div data-dojo-type="dijit/layout/ContentPane" id="map" data-dojo-props="region:'center'"></div>
