@@ -29,13 +29,27 @@
       }
 
       a{
-        color: white;
+        color: black;
         text-decoration: none;
         font-weight: bold;
       }
 
       a:hover{
-        color: black;
+        color: red;
+      }
+
+      a.button {
+        -webkit-appearance: button;
+        -moz-appearance: button;
+        appearance: button;
+
+        text-decoration: none;
+        color: initial;
+        padding: 10px;
+      }
+
+      a.button:hover{
+        color: red;
       }
 
       .dj_ie .infowindow .window .top .right .user .content { position: relative; background-color: green; }
@@ -59,6 +73,7 @@
 
         "esri/dijit/editing/Editor",
         "esri/dijit/editing/TemplatePicker",
+        "esri/dijit/Measurement",
 
         "esri/config",
         "dojo/i18n!esri/nls/jsapi",
@@ -72,6 +87,7 @@
         ArcGISTiledMapServiceLayer, FeatureLayer,
         Color, SimpleMarkerSymbol, SimpleLineSymbol,
         Editor, TemplatePicker,
+        Measurement,
         esriConfig, jsapiBundle,
         arrayUtils, parser, keys
       ) {
@@ -163,15 +179,26 @@
 
           myEditor.startup();
         }
+
+        // measurement widget
+        var measurement = new Measurement({
+          map: map
+        },"measurementDiv");
+        measurement.startup();  
+
       });
     </script>
+
   </head>
   <body class="claro">
     <div id="main" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline'" style="height:width:100%;height:100%;">
-      <div data-dojo-type="dijit/layout/ContentPane" id="header" data-dojo-props="region:'top'">
-        Edit Aerial Obstructions Layer
+      <div data-dojo-type="dijit/layout/ContentPane" id="header" data-dojo-props="region:'top'" style="background-color: #f2f0e4; color: black; height: 65px">
+       <a href="http://www.staffordairport.com/" target="_blank">
+          <img src="sra_logo.png">
+        </a>
+        Aerial Obstruction Editor
       </div>
-      <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left'" style="width: 300px;overflow:hidden; background-color: green; color:white;">
+      <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left'" style="width: 300px;overflow:hidden; background-color: #f2f0e4; color: black;">
         <div id="description">
           Use this editor to add or delete possible aerial obstructions within the vicinity <br><br>
         </div>
@@ -179,7 +206,10 @@
           <div id="templateDiv"></div>
           <div id="editorDiv"></div>
           <br><br>
-          <a target="_blank" href="SRA_AO_Viewer.html">Check out this layer in 3D</a>
+          <div id="measurementDiv"></div>
+          <a href="SRA_AO_Viewer.html" class="button" target="_blank"> AO Viewer (3D) </a>
+          <br><br>
+          <a href="Index.html" class="button" target="_blank"> SRA IMS </a>
         </div>
       </div>
       <div data-dojo-type="dijit/layout/ContentPane" id="map" data-dojo-props="region:'center'"></div>

@@ -29,14 +29,28 @@
       }
 
       a{
-        color: white;
+        color: black;
         text-decoration: none;
         font-weight: bold;
       }
 
       a:hover{
-        color: black;
+        color: red;
       }
+
+      a.button {
+		    -webkit-appearance: button;
+		    -moz-appearance: button;
+		    appearance: button;
+
+		    text-decoration: none;
+		    color: initial;
+		    padding: 10px;
+		}
+
+	  a.button:hover{
+	  	color: red;
+	  }
 
       .dj_ie .infowindow .window .top .right .user .content { position: relative; background-color: green; }
       .dj_ie .simpleInfoWindow .content { position: relative; background-color: green; }
@@ -199,7 +213,7 @@
     </script>
   </head>
   <body class="nihilo">
-    <div id="main" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline'" style="height:width:100%;height:100%;">
+    <div id="main" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline'" style="height:width:100%;height:100%; background-color: green;">
       <div data-dojo-type="dijit/layout/ContentPane" id="header" data-dojo-props="region:'top'" style="background-color: #f2f0e4; color: black; height: 65px">
        <a href="http://www.staffordairport.com/" target="_blank">
         	<img src="sra_logo.png">
@@ -225,9 +239,16 @@
 		            <br><br>
 		            <div id="measurementDiv"></div>
 		        </div>
-		        <div data-dojo-type="dijit/layout/ContentPane" title="Aerial Obstructions">
-		        	<br><br>
-		            <a target="_blank" href="SRA_AO_Viewer.html">Check out this layer in 3D</a>
+		        <div data-dojo-type="dijit/layout/ContentPane" title="Aerial Obstruction Planning" style="color: black">
+		        	<br>
+		        	These two webpages can be used for planning and examining potential aerial obstructions around 
+		        	Stafford Regional Airport.
+		            <br><br>
+		            View obstructions and FAA Part 77 surfaces
+		            <a href="SRA_AO_Viewer.html" class="button" target="_blank"> AO Viewer (3D) </a>
+		            <br><br>
+		            Move and create aerial obstructions
+		            <a href="SRA_Editor.html" class="button" target="_blank"> AO Editor (2D) </a>
 		        </div>
 		    </div>
 		</div>
