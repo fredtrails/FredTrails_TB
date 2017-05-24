@@ -122,32 +122,152 @@
           zoom: 15
         });
 
-        // Popup template
-        var popupTemplate = new PopupTemplate({
-            title: "Feature Info",
-            
+        // Popup template for assignments
+        var assignment_popup = new PopupTemplate({
+            title: "Assignment Information",
+            fieldInfos: [
+              {
+                fieldName: "description",
+                visible: true,
+                label: "Description"
+              },
+              {
+                fieldName: "priority",
+                visible: true,
+                label: "Priority"
+              },
+              {
+                fieldName: "assignmentType",
+                visible: true,
+                label: "Assignment Type "
+              },
+              ],            
             showAttachments: true
+          });
+
+        // Popup template for building layer
+        var building_popup = new PopupTemplate({
+            title: "Building Information",
+            fieldInfos: [
+              {
+                fieldName: "BuildingName",
+                visible: true,
+                label: "Building Name"
+              },
+              {
+                fieldName: "Leasee",
+                visible: true,
+                label: "Leasee"
+              },
+              {
+                fieldName: "LeaseeContact",
+                visible: true,
+                label: "Leasee Contact"
+              },
+              {
+                fieldName: "PrimaryUse",
+                visible: true,
+                label: "Primary Use"
+              },
+              ],            
+            showAttachments: true
+          });
+
+        // Popup template for Need work survey layer
+        var needs_work_popup = new PopupTemplate({
+            title: "Hot fix Needed",
+            fieldInfos: [
+              {
+                fieldName: "Creator",
+                visible: true,
+                label: "Issue found by"
+              },
+              {
+                fieldName: "field_5",
+                visible: true,
+                label: "Issue"
+              },
+              {
+                fieldName: "field_3",
+                visible: true,
+                label: "Priority"
+              },
+              {
+                fieldName: "field_2",
+                visible: true,
+                label: "Issue Description"
+              },
+              {
+                fieldName: "field_1",
+                visible: true,
+                label: "Logged Date"
+              },
+              ],            
+            showAttachments: true
+          });
+
+
+        // Popup template for runway layer
+        var runway_popup = new PopupTemplate({
+            title: "Runway Information",
+            description: "Runway Designator: 15/33<br>Surface material: Asphalt<br>Dimensions: 1000'x100'<br><a href='https://airnav.com/airport/RMN' target='_blank'>Airport Information</a>"
+          });
+
+
+
+         // Popup template for Fuel layer
+         var fuel_popup = new PopupTemplate({
+            title: "Fuel Tank Information",
+            fieldInfos: [
+              {
+                fieldName: "Fuel_type",
+                visible: true,
+                label: "Fuel Type"
+              },
+              {
+                fieldName: "Capacity_in_gallons",
+                visible: true,
+                label: "Capacity in gallons"
+              },
+              {
+                fieldName: "Last_refuel_date",
+                visible: true,
+                label: "Last refuel date"
+              },
+              {
+                fieldName: "last_inspection",
+                visible: true,
+                label: "Last inspection date"
+              },
+              ],            
+            
+          });
+
+        // Popup template for fence layer
+        var Fence_popup = new PopupTemplate({
+            title: "Fence Line",
+            description: "Height: 12 Feet<br>Material: Chain Linked"
           });
 
          // Carbon storage of trees in Warren Wilson College.
 	    var runway = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Extruded_Runway_WFL/FeatureServer/0",{
 			mode: FeatureLayer.MODE_ONDEMAND, 
 			id: "Runway",
-			infoTemplate: popupTemplate,
+			infoTemplate: runway_popup,
 			outFields: ['*']
 		});
 
 
 	    var fence = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/SRA_Fence_Line/FeatureServer/0",{
 			mode: FeatureLayer.MODE_ONDEMAND, 
-			infoTemplate: popupTemplate,
+			infoTemplate: Fence_popup,
 			id: "Fence Line",
 			outFields: ['*']
 		});
 
 	    var buildings = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/SRA_Buildings/FeatureServer/0",{
 			mode: FeatureLayer.MODE_ONDEMAND, 
-			infoTemplate: popupTemplate,
+			infoTemplate: building_popup,
 			id: "Buildings",
 			outFields: ['*']
 		});
@@ -155,15 +275,23 @@
 	    var issues = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/survey123_3ce3df673f9b431ea009efeb3ceab69f/FeatureServer/0",{
 			mode: FeatureLayer.MODE_ONDEMAND, 
 			id: "Hot Fix Needed",
-			infoTemplate: popupTemplate,
+			infoTemplate: needs_work_popup,
 			outFields: ['*']
 		});
 
 		var fuel = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Wet_Fuel_Storage/FeatureServer/0",{
 			mode: FeatureLayer.MODE_ONDEMAND, 
 			id: "Wet Fuel Storage",
-			infoTemplate: popupTemplate,
+			infoTemplate: fuel_popup,
 			outFields: ['*']
+		});
+
+		var assignments = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/assignments_5d191713b63a41caa404abb03e259931/FeatureServer/0",{
+			mode: FeatureLayer.MODE_ONDEMAND, 
+			id: "Assignments",
+			infoTemplate: assignment_popup,
+			outFields: ['*']
+
 		});
 
 		
@@ -174,13 +302,13 @@
         });
 	    
 
-	    map.addLayers([runway, fence, buildings, fuel, issues, traffic]);
+	    map.addLayers([runway, fence, buildings, fuel, issues, traffic, assignments]);
 
 	    // Isolate basemap layer so we can rename it for the layer list widget
 	    var bmLayerID = map.getLayer(map.layerIds[0]);
 
 	    // Layer list object for ListLayer widget
-		var LL = [{layer: bmLayerID, id:"Basemap"},{layer: runway},{layer: fence},{layer: buildings},{layer: issues}, {layer: fuel},];
+		var LL = [{layer: bmLayerID, id:"Basemap"},{layer: runway},{layer: fence},{layer: buildings},{layer: issues}, {layer: fuel}, {layer: assignments}];
 
 		// Layer List Widget
 		var trafficWiget = new LayerList({
