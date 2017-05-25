@@ -100,7 +100,7 @@
 
 
         map = new Map("map", {
-          basemap: "satellite",
+          basemap: "hybrid",
           center: [-77.455093,38.397833],
           zoom: 12
         });
@@ -109,7 +109,7 @@
 
         
 
-        var runway = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Extruded_Runway_WFL/FeatureServer/0", {
+        var runway = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Runway/FeatureServer/0", {
           mode: FeatureLayer.MODE_ONDEMAND,
           outFields: ['*']
         });
@@ -119,8 +119,6 @@
           outFields: ['*']
         });
 
-        
-       
 
         map.addLayers([obstructionsPoints, runway]);
 
