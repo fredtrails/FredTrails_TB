@@ -409,6 +409,8 @@
 		        	<a href="https://survey123.arcgis.com" class="button" target="_blank"> Surveys </a>
 		        	<br><br>
 		            <div id="measurementDiv"></div>
+		            <br><br>
+		            <button id="printTime">Print Map</button>
 		        </div>
 		        <div data-dojo-type="dijit/layout/ContentPane" title="Draw Tools" style="color: black">
 		            <div>Select a shape then draw on map to add graphic</div>
@@ -483,4 +485,13 @@
       </div>
     </div>
   </body>
+  <script>
+  	document.getElementById("printTime").addEventListener("click", function() {
+	     var printContents = document.getElementById('mapDiv').innerHTML;
+	     var originalContents = document.body.innerHTML;
+	     document.body.innerHTML = printContents;
+	     window.print();
+	     document.body.innerHTML = originalContents;
+	});
+  </script>
 </html>
