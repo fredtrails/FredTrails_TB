@@ -52,6 +52,14 @@
         color: red;
       }
 
+      #search {
+         display: block;
+         position: absolute;
+         z-index: 2;
+         top: 20px;
+         right: 20px;
+      }
+
       .dj_ie .infowindow .window .top .right .user .content { position: relative; background-color: green; }
       .dj_ie .simpleInfoWindow .content { position: relative; background-color: green; }
     </style>
@@ -74,6 +82,7 @@
         "esri/dijit/editing/Editor",
         "esri/dijit/editing/TemplatePicker",
         "esri/dijit/Measurement",
+        "esri/dijit/Search",
 
         "esri/config",
         "dojo/i18n!esri/nls/jsapi",
@@ -87,7 +96,7 @@
         ArcGISTiledMapServiceLayer, FeatureLayer,
         Color, SimpleMarkerSymbol, SimpleLineSymbol,
         Editor, TemplatePicker,
-        Measurement,
+        Measurement, Search,
         esriConfig, jsapiBundle,
         arrayUtils, parser, keys
       ) {
@@ -182,7 +191,12 @@
         var measurement = new Measurement({
           map: map
         },"measurementDiv");
-        measurement.startup();  
+        measurement.startup(); 
+
+        var search = new Search({
+            map: map
+         }, "search");
+         search.startup(); 
 
       });
     </script>
@@ -211,7 +225,10 @@
           <a href="index.html" class="button" target="_blank"> SRA IMS </a>
         </div>
       </div>
-      <div data-dojo-type="dijit/layout/ContentPane" id="map" data-dojo-props="region:'center'"></div>
+      <div data-dojo-type="dijit/layout/ContentPane" id="mapDiv" data-dojo-props="region:'center'" style="background-color: green; padding: 0">
+        <div id="search"></div>       
+        <div id="map" style="width: 100%; height: 100%; padding: 0; background-color: green"></div>
+      </div>
     </div>
   </body>
 </html>
