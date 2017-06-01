@@ -11,3 +11,11 @@ This project has three components:
 
 3.) AO Viewer (SRA_AO_Viewer.html)
 	ArcGIS Javascript v4.3
+
+
+To do
+Look into web based Cad systems -- http://a360.co/2qFQapa
+
+get noise contours from Ed - have a noise planner tool
+
+get buffer in there
