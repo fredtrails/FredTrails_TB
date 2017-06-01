@@ -1,0 +1,52 @@
+html,body{height:100%;width:100%;margin:0;overflow:hidden; background-color: green;}
+      #map{
+        padding:0;
+      }
+      #header{
+        font-size: 1.1em;
+        font-family: sans-serif;
+        padding-left: 1em;
+        padding-top:4px;
+        color: white;
+        background-color: green;
+        font-weight: bold;
+        text-align: center;
+      }
+      .templatePicker {
+        border: none;
+      }
+
+      a{
+        color: black;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      a:hover{
+        color: red;
+      }
+
+      a.button {
+        -webkit-appearance: button;
+        -moz-appearance: button;
+        appearance: button;
+
+        text-decoration: none;
+        color: initial;
+        padding: 10px;
+      }
+
+      a.button:hover{
+        color: red;
+      }
+
+      #search {
+         display: block;
+         position: absolute;
+         z-index: 2;
+         top: 20px;
+         right: 20px;
+      }
+
+      .dj_ie .infowindow .window .top .right .user .content { position: relative; background-color: green; }
+      .dj_ie .simpleInfoWindow .content { position: relative; background-color: green; }
