@@ -7,7 +7,7 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
     <title>Edit SRA AOs</title>
 
-    <link rel="stylesheet" href="https://js.arcgis.com/3.19/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.19/dijit/themes/nihilo/nihilo.css">
     <link rel="stylesheet" href="https://js.arcgis.com/3.19/esri/css/esri.css">
     <style>
       html,body{height:100%;width:100%;margin:0;overflow:hidden; background-color: green;}
@@ -83,6 +83,7 @@
         "esri/dijit/editing/TemplatePicker",
         "esri/dijit/Measurement",
         "esri/dijit/Search",
+        "esri/dijit/LayerList",
 
         "esri/config",
         "dojo/i18n!esri/nls/jsapi",
@@ -96,7 +97,7 @@
         ArcGISTiledMapServiceLayer, FeatureLayer,
         Color, SimpleMarkerSymbol, SimpleLineSymbol,
         Editor, TemplatePicker,
-        Measurement, Search,
+        Measurement, Search, LayerList,
         esriConfig, jsapiBundle,
         arrayUtils, parser, keys
       ) {
@@ -123,13 +124,51 @@
           outFields: ['*']
         });
 
+        // Surfaces
+
+        // Approach Surface
+        var approach = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Part_77_surfaces_WFL/FeatureServer/0", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          outFields: ['*']
+        });
+
+        // Transitional Surface
+        var trans = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Part_77_surfaces_WFL/FeatureServer/1", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          outFields: ['*']
+        });
+
+        // Primary Surface
+        var primary = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Part_77_surfaces_WFL/FeatureServer/2", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          outFields: ['*']
+        });
+
+        // Horizontal Surface
+        var horiz = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Part_77_surfaces_WFL/FeatureServer/3", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          outFields: ['*']
+        });
+
+        // Conical surface
+        var conical = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Part_77_surfaces_WFL/FeatureServer/4", {
+          mode: FeatureLayer.MODE_ONDEMAND,
+          outFields: ['*']
+        });
+
         var obstructionsPoints = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Aerial_Obstruction/FeatureServer/0", {
           mode: FeatureLayer.MODE_ONDEMAND,
           outFields: ['*']
         });
 
+        // Add layers to map
+        map.addLayers([trans, primary, horiz, conical, approach, obstructionsPoints, runway]);
 
-        map.addLayers([obstructionsPoints, runway]);
+        // Isolate basemap layer so we can rename it for the layer list widget
+        var bmLayerID = map.getLayer(map.layerIds[0]);
+
+        // Layer list object for ListLayer widget
+        var LL = [{layer: bmLayerID, id:"Basemap"},{layer: runway},{layer: trans},{layer: primary},{layer: horiz}, {layer: conical}, {layer: approach}, {layer: obstructionsPoints}];
 
         function initEditor(evt) {
           // Instead of running this function to get an array of layers, I just created an array of the layers I want in the editor
@@ -185,9 +224,8 @@
           });
 
           myEditor.startup();
-        }
 
-        // measurement widget
+          // measurement widget
         var measurement = new Measurement({
           map: map
         },"measurementDiv");
@@ -198,11 +236,24 @@
          }, "search");
          search.startup(); 
 
+         // Layer List Widget
+        var myWidget = new LayerList({
+               map: map,
+               layers: LL,
+               showOpacitySlider: true,
+               showLegend: true
+            },"layerList"); 
+            myWidget.startup();
+
+        }// End of the onload function
+
+        
+
       });
     </script>
 
   </head>
-  <body class="claro">
+  <body class="nihilo">
     <div id="main" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline'" style="height:width:100%;height:100%;">
       <div data-dojo-type="dijit/layout/ContentPane" id="header" data-dojo-props="region:'top'" style="background-color: #f2f0e4; color: black; height: 65px">
        <a href="http://www.staffordairport.com/" target="_blank">
@@ -211,19 +262,29 @@
         Aerial Obstruction Editor
       </div>
       <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left'" style="width: 300px;overflow:hidden; background-color: #f2f0e4; color: black;">
-        <div id="description">
-          Use this editor to add or delete possible aerial obstructions within the vicinity <br><br>
-        </div>
-        <div id="editorDivContainer" style="color: black;">
-          <div id="templateDiv"></div>
-          <div id="editorDiv"></div>
-          <br><br>
-          <div id="measurementDiv"></div>
-          <br><br>
-          <a href="SRA_AO_Viewer.html" class="button" target="_blank"> AO Viewer (3D) </a>
-          <br><br>
-          <a href="index.html" class="button" target="_blank"> SRA IMS </a>
-        </div>
+        <div data-dojo-type="dijit/layout/TabContainer" style="height: 500px;">
+          <div data-dojo-type="dijit/layout/ContentPane" title="Editor" selected="true">
+            <div id="description">
+              Use this editor to add or delete possible aerial obstructions within the vicinity <br><br>
+            </div>
+              <div id="editorDivContainer" style="color: black;">
+                <div id="templateDiv"></div>
+                <div id="editorDiv"></div>
+                <br><br>
+                <div id="measurementDiv"></div>
+                <br><br>
+                <a href="SRA_AO_Viewer.html" class="button" target="_blank"> AO Viewer (3D) </a>
+                <br><br>
+                <a href="index.html" class="button" target="_blank"> SRA IMS </a>
+              </div>
+          </div>
+          <div data-dojo-type="dijit/layout/ContentPane" title="Layers">
+            <div id="layerList"></div>
+
+          </div>
+
+
+          </div>
       </div>
       <div data-dojo-type="dijit/layout/ContentPane" id="mapDiv" data-dojo-props="region:'center'" style="background-color: green; padding: 0">
         <div id="search"></div>       

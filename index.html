@@ -9,68 +9,7 @@
 
     <link rel="stylesheet" href="https://js.arcgis.com/3.20/dijit/themes/nihilo/nihilo.css">
     <link rel="stylesheet" href="https://js.arcgis.com/3.20/esri/css/esri.css">
-    <style>
-      html,body{height:100%;width:100%;margin:0;overflow:hidden; background-color: green}
-
-      #map{
-        padding:0;
-    }
-      
-      #header{
-        font-size: 1.1em;
-        font-family: sans-serif;
-        padding-left: 1em;
-        padding-top:4px;
-        color: white;
-        background-color: green;
-        font-weight: bold;
-        text-align: center;
-      }
-      .templatePicker {
-        border: none;
-      }
-
-      a{
-        color: black;
-        text-decoration: none;
-        font-weight: bold;
-      }
-
-      a:hover{
-        color: red;
-      }
-
-      a.button {
-		    -webkit-appearance: button;
-		    -moz-appearance: button;
-		    appearance: button;
-
-		    text-decoration: none;
-		    color: initial;
-		    padding: 10px;
-		}
-
-	  a.button:hover{
-	  	color: red;
-	  }
-
-	  #search {
-         display: block;
-         position: absolute;
-         z-index: 2;
-         top: 20px;
-		 right: 20px;
-      }
-
-      #BasemapToggle {
-	  position: absolute;
-      bottom: 20px;
-      left: 20px;
-      z-index: 50;
-	    }
-
-     
-    </style>
+  	<link rel="stylesheet" type="text/css" href="indexCSS.css">
 
     <script src="https://js.arcgis.com/3.20/"></script>
     <script src="draw.js"></script>
@@ -132,8 +71,6 @@
 
         //create a popup to replace the map's info window
         var popup = new Popup(popupOptions, domConstruct.create("div"));
-
-        // Create the Map object
         
 
         // Popup template for assignments
@@ -377,121 +314,135 @@
 
       });
     </script>
-  </head>
+
+ </head>
   <body class="nihilo">
+
+    <!-- The main Dojo container holding all of the content of the page -->
     <div id="main" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline'" style="height:width:100%;height:100%">
+
+      <!-- The Dojo Header section of the webpage -->
       <div data-dojo-type="dijit/layout/ContentPane" id="header" data-dojo-props="region:'top'" style="background-color: #f2f0e4; color: black; height: 65px; padding: 0">
        	<a href="http://www.staffordairport.com/" target="_blank">
         	<img src="sra_logo.png">
         </a>
         Information Management System
       </div>
-      <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left'" style="width: 310px;overflow:hidden; background-color: #f2f0e4; color: black;">
-        
-        <div id="editorDivContainer" style="color: black;">
-        <div style="width: 310px; height: 300px">
-		    <div data-dojo-type="dijit/layout/AccordionContainer" style="height: 500px;">
-		        <div data-dojo-type="dijit/layout/ContentPane" title="Weather Conditions & Traffic" selected="true">
-		            <span style="display: block !important; width: 300px; text-align: center; font-family: sans-serif; font-size: 12px;"><a href="http://www.wunderground.com/cgi-bin/findweather/getForecast?query=zmw:22554.1.99999&bannertypeclick=wu_clean2day" title="Stafford, Virginia Weather Forecast" target="_blank"><img src="http://weathersticker.wunderground.com/weathersticker/cgi-bin/banner/ban/wxBanner?bannertype=wu_clean2day_cond&airportcode=KRMN&ForcedCity=Stafford&ForcedState=VA&zip=22554&language=EN" alt="Find more about Weather in Stafford, VA" width="300" /></a><br><a href="http://www.wunderground.com/cgi-bin/findweather/getForecast?query=zmw:22554.1.99999&bannertypeclick=wu_clean2day" title="Get latest Weather Forecast updates" style="font-family: sans-serif; font-size: 12px" target="_blank">Click for weather forecast</a></span>
-		            <br><br>
-		            Turn this layer on to view live traffic conditions around Stafford Regional Airport.
-		            <br><br>
-		            <div id="trafficWigetDiv"></div>
-		        </div>
-		        <div data-dojo-type="dijit/layout/ContentPane" title="Map Layers">
-		            <div id="layerList"></div>     
-		        </div>
-		        <div data-dojo-type="dijit/layout/ContentPane" title="Map Tools" style="color: black">
-		            <span style="font-weight: bold; font-size: 13pt">Mobile Application Management</span> 
-		            <br><br>
-		            <a href="https://workforce.arcgis.com/projects" class="button" target="_blank"> Workforce Portal </a>
-		        	<br><br>
-		        	<a href="https://survey123.arcgis.com" class="button" target="_blank"> Surveys </a>
-		        	<br><br>
-		            <div id="measurementDiv"></div>
-		            <br><br>
-		            <button id="printTime">Print Map</button>
-		        </div>
-		        <div data-dojo-type="dijit/layout/ContentPane" title="Draw Tools" style="color: black">
-		            <div>Select a shape then draw on map to add graphic</div>
-	                <button data-dojo-type="dijit/form/Button">Point</button>
-                    <button data-dojo-type="dijit/form/Button">Line</button>
-                    <button data-dojo-type="dijit/form/Button">Polygon</button>
-                    <button data-dojo-type="dijit/form/Button">Freehand Polygon</button>
-			    	<button data-dojo-type="dijit/form/Button">Arrow</button>
-                    <button data-dojo-type="dijit/form/Button">Freehand Polyline</button>
-                    <button data-dojo-type="dijit/form/Button">Circle</button>
-                    <br><br>
-                    <input id="FillcheckBox" />
-                    <label for="FillcheckBox">Solid Fill</label>
-			    	<div></div>
-			    	<input id="MeasCheckBox" />
-	                    <label for="MeasCheckBox">Add Measurements</label>
-			    		<div id="units"></div>
-			    	<br><br>
-			    	Size/Thickness:
-	                <div id="spinnerId1"></div>
-			    	<br><br>
-			    	<div id="TransSlider"></div>
-			    	<label for="slider1input">Transparency:</label>
-			    	<input readonly id="slider1input" size="1" value="0%"/>
-	                    <br><br>Graphic/Text Color:
-	                    <div></div>
-	                    <div id="colorButton" style="background-color: #FFFFFF; border-color: black; border-width: 1px;" dojoType="dijit/form/DropDownButton"> <span id="colorText"> <span id="colorSwatch" style="height: 10px; width: 10px; border: 1px solid black; background-color: black;">&nbsp;&nbsp;</span></span>
-	                        <div data-dojo-type="dijit/TooltipDialog" id="colorPaletteDialog" title="Color Palette">
-	                            <div data-dojo-type="dijit/ColorPalette" id="colorPaletteWidget"></div>
-	                        </div>
+
+    <!-- The Dojo left content section of the webpage -->
+    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left'" style="width: 310px;overflow:hidden; background-color: #f2f0e4; color: black;">
+
+    	<!-- The Accordian Container -->
+		<div data-dojo-type="dijit/layout/AccordionContainer" style="height: 500px;">
+
+		<!-- The Accordian section that holds the weather and traffic and links to the mobile apps -->
+	        <div data-dojo-type="dijit/layout/ContentPane" title="Weather Conditions & Traffic" selected="true">
+	            <span style="display: block !important; width: 300px; text-align: center; font-family: sans-serif; font-size: 12px;"><a href="http://www.wunderground.com/cgi-bin/findweather/getForecast?query=zmw:22554.1.99999&bannertypeclick=wu_clean2day" title="Stafford, Virginia Weather Forecast" target="_blank"><img src="http://weathersticker.wunderground.com/weathersticker/cgi-bin/banner/ban/wxBanner?bannertype=wu_clean2day_cond&airportcode=KRMN&ForcedCity=Stafford&ForcedState=VA&zip=22554&language=EN" alt="Find more about Weather in Stafford, VA" width="300" /></a><br><a href="http://www.wunderground.com/cgi-bin/findweather/getForecast?query=zmw:22554.1.99999&bannertypeclick=wu_clean2day" title="Get latest Weather Forecast updates" style="font-family: sans-serif; font-size: 12px" target="_blank">Click for weather forecast</a></span>
+	            <br><br>
+	            Turn this layer on to view live traffic conditions around Stafford Regional Airport.
+	            <br><br>
+	            <div id="trafficWigetDiv"></div>
+	            <br></br>
+	            <span style="font-weight: bold; font-size: 13pt">Mobile Application Management</span> 
+	            <br><br>
+	            <a href="https://workforce.arcgis.com/projects" class="button" target="_blank"> Workforce Portal </a>
+	        	&nbsp&nbsp&nbsp
+	        	<a href="https://survey123.arcgis.com" class="button" target="_blank"> Surveys </a>
+	        </div>
+
+	        <!-- The Accordian section that holds the map layers -->
+	        <div data-dojo-type="dijit/layout/ContentPane" title="Map Layers">
+	            <div id="layerList"></div>     
+	        </div>
+
+	        <!-- The Accordian section that holds the map tools -->
+	        <div data-dojo-type="dijit/layout/ContentPane" title="Map Tools" style="color: black">
+	        	<br>
+	        	<button id="printTime" class="button" onclick="javascript:printDiv('mapDiv')")>Print Map</button>
+	        	<br><br>
+	            <div id="measurementDiv"></div>
+	        </div>
+	 
+	        <!-- The Accordian section that holds the draw tools -->
+	        <div data-dojo-type="dijit/layout/ContentPane" title="Draw Tools" style="color: black">
+	            <div>Select a shape then draw on map to add graphic</div>
+	            <button data-dojo-type="dijit/form/Button">Point</button>
+	            <button data-dojo-type="dijit/form/Button">Line</button>
+	            <button data-dojo-type="dijit/form/Button">Polygon</button>
+	            <button data-dojo-type="dijit/form/Button">Freehand Polygon</button>
+		    	<button data-dojo-type="dijit/form/Button">Arrow</button>
+	            <button data-dojo-type="dijit/form/Button">Freehand Polyline</button>
+	            <button data-dojo-type="dijit/form/Button">Circle</button>
+	            <br><br>
+	            <input id="FillcheckBox" />
+	            <label for="FillcheckBox">Solid Fill</label>
+		    	<div></div>
+		    	<input id="MeasCheckBox" />
+	                <label for="MeasCheckBox">Add Measurements</label>
+		    		<div id="units"></div>
+		    	<br><br>
+		    	Size/Thickness:
+	            <div id="spinnerId1"></div>
+		    	<br><br>
+		    	<div id="TransSlider"></div>
+		    	<label for="slider1input">Transparency:</label>
+		    	<input readonly id="slider1input" size="1" value="0%"/>
+	                <br><br>Graphic/Text Color:
+	                <div></div>
+	                <div id="colorButton" style="background-color: #FFFFFF; border-color: black; border-width: 1px;" dojoType="dijit/form/DropDownButton"> <span id="colorText"> <span id="colorSwatch" style="height: 10px; width: 10px; border: 1px solid black; background-color: black;">&nbsp;&nbsp;</span></span>
+	                    <div data-dojo-type="dijit/TooltipDialog" id="colorPaletteDialog" title="Color Palette">
+	                        <div data-dojo-type="dijit/ColorPalette" id="colorPaletteWidget"></div>
 	                    </div>
-	                    <br><br>
-	                    <input id="value0Box" data-dojo-type="dijit/form/TextBox" value="" placeHolder="enter your text here" data-dojo-props="intermediateChanges:true"></input>
-	                    <br><br>
-			    		<button data-dojo-type="dijit/form/Button">Text</button>
-			    		<br><br>Font Size:
-	                    <div id="spinnerId2"></div>
-			    			<div data-dojo-type="dijit/form/ToggleButton" id="bold" data-dojo-props="iconClass:'dijitEditorIcon dijitEditorIconBold', showLabel:false"></div>
-			    			<div data-dojo-type="dijit/form/ToggleButton" id="underline" data-dojo-props="iconClass:'dijitEditorIcon dijitEditorIconUnderline', showLabel:false"></div>
-			    			<div data-dojo-type="dijit/form/ToggleButton" id="italic" data-dojo-props="iconClass:'dijitEditorIcon dijitEditorIconItalic', showLabel:false"></div>
-	                    <br><br>
-	                    
-			    	<button data-dojo-type="dijit/form/Button" id="undo"data-dojo-props="disabled: true, iconClass:'dijitEditorIcon dijitEditorIconUndo'"></button>
-			    	<button data-dojo-type="dijit/form/Button" id="redo"data-dojo-props="disabled: true, iconClass:'dijitEditorIcon dijitEditorIconRedo'"></button>
-			    	<br><br>
-	                <button id="clear" data-dojo-type="dijit.form.Button" type="button" data-dojo-attach-point="button">Clear all graphics</button>
-	                <br><br>Right-click a Graphic to access options</div>
+	                </div>
+	                <br><br>
+	                <input id="value0Box" data-dojo-type="dijit/form/TextBox" value="" placeHolder="enter your text here" data-dojo-props="intermediateChanges:true"></input>
+	                <br><br>
+		    		<button data-dojo-type="dijit/form/Button">Text</button>
+		    		<br><br>Font Size:
+	                <div id="spinnerId2"></div>
+		    			<div data-dojo-type="dijit/form/ToggleButton" id="bold" data-dojo-props="iconClass:'dijitEditorIcon dijitEditorIconBold', showLabel:false"></div>
+		    			<div data-dojo-type="dijit/form/ToggleButton" id="underline" data-dojo-props="iconClass:'dijitEditorIcon dijitEditorIconUnderline', showLabel:false"></div>
+		    			<div data-dojo-type="dijit/form/ToggleButton" id="italic" data-dojo-props="iconClass:'dijitEditorIcon dijitEditorIconItalic', showLabel:false"></div>
+	                <br><br> 
+		    	<button data-dojo-type="dijit/form/Button" id="undo"data-dojo-props="disabled: true, iconClass:'dijitEditorIcon dijitEditorIconUndo'"></button>
+		    	<button data-dojo-type="dijit/form/Button" id="redo"data-dojo-props="disabled: true, iconClass:'dijitEditorIcon dijitEditorIconRedo'"></button>
+		    	<br><br>
+	            <button id="clear" data-dojo-type="dijit.form.Button" type="button" data-dojo-attach-point="button">Clear all graphics</button>
+	            <br><br>Right-click a Graphic to access options
+	        </div>
+
+	        <!-- The Accordian section for the aerial obstruction editor and viewer -->		         
+	        <div data-dojo-type="dijit/layout/ContentPane" title="Aerial Obstruction Planning" style="color: black">
+	        	<br>
+	        	These two webpages can be used for planning and examining potential aerial obstructions around 
+	        	Stafford Regional Airport.
+	            <br><br>
+	            View obstructions and FAA Part 77 surfaces<br>
+	            <a href="SRA_AO_Viewer.html" class="button" target="_blank"> AO Viewer (3D) </a>
+	            <br><br>
+	            Move and create aerial obstructions<br>
+	            <a href="SRA_Editor.html" class="button" target="_blank"> AO Editor (2D) </a>
+	        </div>
+		</div>
+	</div>
 		         
-		        <div data-dojo-type="dijit/layout/ContentPane" title="Aerial Obstruction Planning" style="color: black">
-		        	<br>
-		        	These two webpages can be used for planning and examining potential aerial obstructions around 
-		        	Stafford Regional Airport.
-		            <br><br>
-		            View obstructions and FAA Part 77 surfaces<br>
-		            <a href="SRA_AO_Viewer.html" class="button" target="_blank"> AO Viewer (3D) </a>
-		            <br><br>
-		            Move and create aerial obstructions<br>
-		            <a href="SRA_Editor.html" class="button" target="_blank"> AO Editor (2D) </a>
-		        </div>
-		    </div>
-		    </div>
-		    </div>
-		    </div>
-		         
-        
-      
-      
-      <div data-dojo-type="dijit/layout/ContentPane" id="mapDiv" data-dojo-props="region:'center'" style="background-color: green; padding: 0">
+    <!-- The Dojo center section of the webpage that holds the map and it's widgets -->  
+    <div data-dojo-type="dijit/layout/ContentPane" id="mapDiv" data-dojo-props="region:'center'" style="background-color: green; padding: 0">
       	<div id="search"></div>
       	<div id="BasemapToggle"></div>      	
-      	<div id="map" style="width: 100%; height: 100%; padding: 0; background-color: green"></div>
-      </div>
+      	<div id="map" style="width: 100%; height: 100%; padding: 0;"></div>
     </div>
-  </body>
+</div>
+</body>
   <script>
-  	document.getElementById("printTime").addEventListener("click", function() {
-	     var printContents = document.getElementById('mapDiv').innerHTML;
-	     var originalContents = document.body.innerHTML;
-	     document.body.innerHTML = printContents;
-	     window.print();
-	     document.body.innerHTML = originalContents;
-	});
+
+    // Funtion attached to the print button
+   	function printDiv(divID) {
+        //Get the HTML of div
+        var divElements = document.getElementById("mapDiv").innerHTML;
+        // The @media CSS will format the print area
+        window.print();
+     };
+
   </script>
 </html>

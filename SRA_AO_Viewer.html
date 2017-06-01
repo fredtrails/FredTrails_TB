@@ -35,8 +35,8 @@
 
   </style>
 
-  <link rel="stylesheet" href="https://js.arcgis.com/4.2/esri/css/main.css">
-  <script src="https://js.arcgis.com/4.2/"></script>
+  <link rel="stylesheet" href="https://js.arcgis.com/4.3/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.3/"></script>
 
   <script>
     require([
@@ -45,11 +45,12 @@
       "esri/layers/FeatureLayer",
       "esri/WebScene",
       "esri/widgets/LayerList",
+      "esri/layers/SceneLayer",
 
       "dojo/on",
       "dojo/dom",
       "dojo/domReady!"
-    ], function(Map, SceneView, FeatureLayer, WebScene, LayerList, on, dom) {
+    ], function(Map, SceneView, FeatureLayer, WebScene, LayerList, SceneLayer, on, dom) {
 
       // Create the Map
       var map = new Map({
@@ -93,8 +94,18 @@
         }
       });
 
+        var conical = new FeatureLayer({
+        url: "http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Part_77_surfaces_WFL/FeatureServer/4",
+        elevationInfo: {
+          mode: "relative-to-ground",
+          offset: 569.2,
+          
+        }
+      });
+
       scene.add(AOs);
       scene.add(runway);
+      scene.add(conical);
 
       // Register events to the controls
       var offsetInput = dom.byId("offsetInput");
