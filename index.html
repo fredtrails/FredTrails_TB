@@ -359,17 +359,17 @@
 	        <!-- The Accordian section that holds the map tools -->
 	        <div data-dojo-type="dijit/layout/ContentPane" title="Map Tools" style="color: black">
 	        	<br>
-	        	<button id="printTime" 
-	        			class="button" 
+	        	<button data-dojo-type="dijit/form/Button"
+	        			id="printTime"  
 	        			onclick="javascript:printDiv('mapDiv')" 
 	        			style="display: block; margin: 0 auto;")>Print Map</button>
 	        	<br><hr />
 	        	<br>
 	        	<div id="bufferDiv" style="text-align: center; font-weight: bold">Create Buffers
 	        		<br><br>
-	        		<button type="button" class="tool" id="line">Line</button>&nbsp
-				    <button type="button" class="tool" id="polyline">Polyline</button>&nbsp
-				    <button type="button" class="tool" id="polygon">Polygon</button>&nbsp
+	        		<button data-dojo-type="dijit/form/Button" id="line">Line</button>&nbsp
+				    <button data-dojo-type="dijit/form/Button" id="polyline">Polyline</button>&nbsp
+				    <button data-dojo-type="dijit/form/Button" id="polygon">Polygon</button>&nbsp
 				    <br/><hr />
 				    <div><b>Buffer Parameters</b></div>
 				    Distance:&nbsp;<input type="text" id="distance" size="5" value="25" />
@@ -383,7 +383,7 @@
 				      <option value="UNIT_DEGREE">Degrees</option>
 				    </select>
 				    <br><br>
-				    <button type="button" id="clearGraphics">Clear Graphics</button>
+				    <button data-dojo-type="dijit/form/Button" id="clearGraphics">Clear Graphics</button>
 	        	</div>
 	        	<br><br>
 	            <div id="measurementDiv"></div>
