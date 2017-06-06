@@ -37,15 +37,15 @@ var map, editToolbar, ctxMenuForGraphics, ctxMenuForMap, buttonclick;
     var selected, currentLocation, PolyArea, measureUnit, symbol;
     var Lat, Long, linelength ,selectedTrans, graphic, point2, curcount;
     require([
-        "esri/map", "dojo/parser", "dijit/form/CheckBox", "esri/toolbars/draw", "dojo/on", "dojo/dom", "dijit/registry", "dojo/_base/Color", "esri/graphic",
-        "esri/symbols/SimpleMarkerSymbol", "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol", "dijit/form/NumberSpinner", "esri/toolbars/edit",
+        "esri/map", "dojo/parser", "dojo/query", "dijit/form/CheckBox", "esri/toolbars/draw", "dojo/on", "esri/tasks/BufferParameters", "dojo/dom", "dijit/registry", "dojo/_base/Color", "esri/graphic",
+        "esri/symbols/SimpleMarkerSymbol", "esri/geometry/normalizeUtils","esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol", "dijit/form/NumberSpinner", "esri/toolbars/edit",
         "esri/geometry/jsonUtils", "dijit/Menu", "dijit/MenuItem", "dijit/MenuSeparator", "esri/geometry/Point", "dijit/form/TextBox", "esri/undoManager", "myModules/CustomOperation",
   "dojo/data/ObjectStore","dojo/store/Memory", "esri/geometry/webMercatorUtils", "esri/SpatialReference", "dojo/dom-construct", "dojo/_base/connect",
         "esri/symbols/Font", "esri/symbols/TextSymbol", "dojo/dom-style", "dijit/popup", "dojo/number", "esri/tasks/LengthsParameters", "esri/tasks/GeometryService",
   "esri/tasks/AreasAndLengthsParameters", "dojo/_base/array", "esri/config", "dijit/form/HorizontalSlider", "dijit/form/Select", "dijit/PopupMenuItem", "dijit/ColorPalette",
         "dijit/layout/BorderContainer", "dijit/layout/ContentPane", "dijit/layout/AccordionContainer", "dijit/form/Button", "dijit/form/ToggleButton", "dojo/domReady!"], 
     function (
-    Map, parser, CheckBox, Draw, on, dom, registry, Color, Graphic, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, NumberSpinner, Edit,
+    Map, parser, query, CheckBox, Draw, on, BufferParameters, dom, registry, Color, Graphic, SimpleMarkerSymbol, normalizeUtils, SimpleLineSymbol, SimpleFillSymbol, NumberSpinner, Edit,
     geometryJsonUtils, Menu, MenuItem, MenuSeparator, Point, TextBox, UndoManager, CustomOperation, ObjectStore, Memory, webMercatorUtils,
     SpatialReference, domConstruct, connect, Font, TextSymbol, domStyle,
   popup, number, LengthsParameters, GeometryService, AreasAndLengthsParameters, array, config, HorizontalSlider, Select, PopupMenuItem, ColorPalette) {
@@ -85,6 +85,8 @@ var map, editToolbar, ctxMenuForGraphics, ctxMenuForMap, buttonclick;
             createMapMenu();
             createGraphicsMenu();
         });
+
+
         
   /////////////// DRAW TOOL /////////////////////////////////
 
@@ -184,6 +186,45 @@ var map, editToolbar, ctxMenuForGraphics, ctxMenuForMap, buttonclick;
             })
       
       ctxMenuForGraphics.addChild(LatLongMenu);
+
+      // Right-click Buffer
+      // var BuffPop = new HorizontalSlider({
+      // name:"slider",
+      // id:"BuffPop",
+      // value: 0,
+      // minimum: 0,
+      // maximum: 100,
+      // style: "width: 150px",
+      // onChange: function(val){
+      //   console.log(val)
+      //   }
+      // });
+
+      // var BuffMenu = new PopupMenuItem({
+      //   label: "Buffer (Feet)",
+      //   popup: BuffPop
+      //       });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       
       //Right-click Transparency
       var TransPop = new HorizontalSlider({
@@ -328,18 +369,18 @@ var map, editToolbar, ctxMenuForGraphics, ctxMenuForMap, buttonclick;
       //ctxMenuForGraphics.addChild(MeasMenu);
       
       //Right-click Delete
-            var SepMenu = new MenuSeparator();
+      var SepMenu = new MenuSeparator();
       ctxMenuForGraphics.addChild(SepMenu);
             var MenuDelete = new MenuItem({
                 label: "Delete",
                 onClick: function () {
-      var operation = new CustomOperation.Add({
-      graphicsLayer: map.graphics,
-      addedGraphic: selected
-    });
-    undoManager.add(operation);
-    undoManager.undo();
-    undoManager.remove(curcount);
+                var operation = new CustomOperation.Add({
+                graphicsLayer: map.graphics,
+                addedGraphic: selected
+                });
+            undoManager.add(operation);
+            undoManager.undo();
+            undoManager.remove(curcount);
                 }
             });
       //ctxMenuForGraphics.addChild(MenuDelete);
@@ -353,6 +394,7 @@ var map, editToolbar, ctxMenuForGraphics, ctxMenuForMap, buttonclick;
         ctxMenuForGraphics.addChild(EditMenu);
         ctxMenuForGraphics.addChild(MoveMenu);
         ctxMenuForGraphics.addChild(RoScMenu);
+        // ctxMenuForGraphics.addChild(BuffMenu);
         ctxMenuForGraphics.addChild(TransMenu);
         ctxMenuForGraphics.addChild(MeasMenu);
         ctxMenuForGraphics.addChild(SepMenu);
@@ -809,4 +851,99 @@ var map, editToolbar, ctxMenuForGraphics, ctxMenuForMap, buttonclick;
             registry.byId("redo").set("disabled", true);
           }
         });
+
+        //////////////////////////////First part of buffer tool//////////////////////////////////////
+        esriConfig.defaults.geometryService = new GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+
+        esriConfig.defaults.io.proxyUrl = "/proxy/";
+        esriConfig.defaults.io.alwaysUseProxy = false;
+
+        //Setup button click handlers
+        on(dom.byId("clearGraphics"), "click", function(){
+          if(map){
+            map.graphics.clear();
+          }
+        });
+        //click handler for the draw tool buttons
+        query(".tool").on("click", function(evt){
+          if(tb){
+           tb.activate(evt.target.id);
+          }
+        });
+
+        
+        //////////////////////////////Buffer/////////////////////////////////////////////////
+        // load buffer controls
+        map.on("load", initToolbar);
+
+
+       function initToolbar(evtObj) {
+        tb = new Draw(evtObj.map);
+        tb.on("draw-end", doBuffer);
+      }
+
+      function doBuffer(evtObj) {
+        tb.deactivate();
+        var geometry = evtObj.geometry, symbol;
+        switch (geometry.type) {
+           case "point":
+             symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_SQUARE, 10, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([255,0,0]), 1), new Color([0,255,0,0.25]));
+             break;
+           case "polyline":
+             symbol = new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASH, new Color([255,0,0]), 1);
+             break;
+           case "polygon":
+             symbol = new SimpleFillSymbol(SimpleFillSymbol.STYLE_NONE, new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASHDOT, new Color([255,0,0]), 2), new Color([255,255,0,0.25]));
+             break;
+        }
+
+          var graphic = new Graphic(geometry, symbol);
+          map.graphics.add(graphic);
+
+          //setup the buffer parameters
+          var params = new BufferParameters();
+          params.distances = [ dom.byId("distance").value ];
+          params.outSpatialReference = map.spatialReference;
+          params.unit = GeometryService[dom.byId("unit").value];
+          //normalize the geometry 
+
+          normalizeUtils.normalizeCentralMeridian([geometry]).then(function(normalizedGeometries){
+            var normalizedGeometry = normalizedGeometries[0];
+            if (normalizedGeometry.type === "polygon") {
+              //if geometry is a polygon then simplify polygon.  This will make the user drawn polygon topologically correct.
+              esriConfig.defaults.geometryService.simplify([normalizedGeometry], function(geometries) {
+                params.geometries = geometries;
+                esriConfig.defaults.geometryService.buffer(params, showBuffer);
+              });
+            } else {
+              params.geometries = [normalizedGeometry];
+              esriConfig.defaults.geometryService.buffer(params, showBuffer);
+            }
+
+          });
+        }
+
+        function showBuffer(bufferedGeometries) {
+          var symbol = new SimpleFillSymbol(
+            SimpleFillSymbol.STYLE_SOLID,
+            new SimpleLineSymbol(
+              SimpleLineSymbol.STYLE_SOLID,
+              new Color([255,0,0,0.65]), 2
+            ),
+            new Color([255,0,0,0.35])
+          );
+
+          array.forEach(bufferedGeometries, function(geometry) {
+            var graphic = new Graphic(geometry, symbol);
+            map.graphics.add(graphic);
+          });
+
+        }
+
+
+
     });
+
+
+
+
