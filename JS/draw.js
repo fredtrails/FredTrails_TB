@@ -59,11 +59,11 @@ var map, editToolbar, ctxMenuForGraphics, ctxMenuForMap, buttonclick;
         //hook up undo/redo buttons
         registry.byId("undo").on("click", function() {
           undoManager.undo();
-    console.log("The current position is: " + undoManager.position);
+          console.log("The current position is: " + undoManager.position);
         });
         registry.byId("redo").on("click", function() {
           undoManager.redo();
-    console.log("The current position is: " + undoManager.position);
+          console.log("The current position is: " + undoManager.position);
         });
 
     
@@ -92,354 +92,314 @@ var map, editToolbar, ctxMenuForGraphics, ctxMenuForMap, buttonclick;
 
         //Default Styles
         var symbolfill = SimpleFillSymbol.STYLE_NULL;
-  var bold = Font.WEIGHT_NORMAL;
-  var underline = "none";
-  var italic = Font.STYLE_NORMAL;
+        var bold = Font.WEIGHT_NORMAL;
+        var underline = "none";
+        var italic = Font.STYLE_NORMAL;
         var myNumber = 3;
         var myFont = 12;
         var TransVal = 1;
-  var red = 0;
-  var green = 0;
-  var blue = 0;
-  var newColor = [red,green,blue,TransVal];
-  var myText = "";
+        var red = 0;
+        var green = 0;
+        var blue = 0;
+        var newColor = [red,green,blue,TransVal];
+        var myText = "";
 
   ///////////// RIGHT-CLICK MENU ////////////////////////////
         
-  //Creates right-click context menu for map
+        //Creates right-click context menu for map
         function createMapMenu() {
-            ctxMenuForMap = new Menu({
-                onOpen: function (box) {
-                    // Lets calculate the map coordinates where user right clicked.
-                    // We'll use this to create the graphic when the user clicks
-                    // on the menu item to "Add Text"
-                    currentLocation = getMapPointFromMenuPosition(box);
-                    editToolbar.deactivate();
-                }
-            });
+          ctxMenuForMap = new Menu({
+            onOpen: function (box) {
+              // Lets calculate the map coordinates where user right clicked.
+              // We'll use this to create the graphic when the user clicks
+              // on the menu item to "Add Text"
+              currentLocation = getMapPointFromMenuPosition(box);
+              editToolbar.deactivate();
+            }
+          });
 
             //When right clicking on map add text
             ctxMenuForMap.addChild(new MenuItem({
-                label: "Add Text",
-                onClick: function (evt) {
-                    var symbol = new TextSymbol(myText).setColor(
-                    new Color(newColor)).setAlign(Font.ALIGN_START).setAngle(0).setDecoration(underline).setFont(
-                    new Font(myFont).setWeight(bold).setStyle(italic));
-                    var point2 = new Point(geometryJsonUtils.fromJson(currentLocation.toJson()));
-                    var graphic = new Graphic(point2, symbol);
-                    map.graphics.add(graphic);
-                }
+              label: "Add Text",
+              onClick: function (evt) {
+                var symbol = new TextSymbol(myText).setColor(
+                new Color(newColor)).setAlign(Font.ALIGN_START).setAngle(0).setDecoration(underline).setFont(
+                new Font(myFont).setWeight(bold).setStyle(italic));
+                var point2 = new Point(geometryJsonUtils.fromJson(currentLocation.toJson()));
+                var graphic = new Graphic(point2, symbol);
+                map.graphics.add(graphic);
+              }
             }));
 
             ctxMenuForMap.startup();
             ctxMenuForMap.bindDomNode(map.container);
         };
     
-  //Creates right-click context menu for GRAPHICS
+        //Creates right-click context menu for GRAPHICS
         function createGraphicsMenu() {
-            ctxMenuForGraphics = new Menu({});
-            
-      var EditMenu = new MenuItem({
-                label: "Edit",
-                onClick: function () {
-                    if (selected.geometry.type !== "point") {
-                        editToolbar.activate(Edit.EDIT_VERTICES, selected);
-                    } else {
-                        editToolbar.activate(Edit.MOVE | Edit.EDIT_VERTICES | Edit.EDIT_TEXT | Edit.SCALE, selected);
-                    }
+          ctxMenuForGraphics = new Menu({}); 
+          var EditMenu = new MenuItem({
+            label: "Edit",
+              onClick: function () {
+                if (selected.geometry.type !== "point") {
+                  editToolbar.activate(Edit.EDIT_VERTICES, selected);
+                } else {
+                  editToolbar.activate(Edit.MOVE | Edit.EDIT_VERTICES | Edit.EDIT_TEXT | Edit.SCALE, selected);
                 }
-            });
-      //ctxMenuForGraphics.addChild(EditMenu);
+              }
+          });
+          //ctxMenuForGraphics.addChild(EditMenu);
       
-      //Right-click Move
-            var MoveMenu = new MenuItem({
-                label: "Move",
-                onClick: function () {
-                    editToolbar.activate(Edit.MOVE, selected);
-                }
-            })
-      //ctxMenuForGraphics.addChild(MoveMenu);
+          //Right-click Move
+          var MoveMenu = new MenuItem({
+            label: "Move",
+            onClick: function () {
+              editToolbar.activate(Edit.MOVE, selected);
+            }
+          })
+          //ctxMenuForGraphics.addChild(MoveMenu);
       
-      //Right-click Rotate/Scale
-            var RoScMenu = new MenuItem({
-                label: "Rotate/Scale",
-                onClick: function () {
-                        editToolbar.activate(Edit.ROTATE | Edit.SCALE, selected);
-                }
-            })
-      //ctxMenuForGraphics.addChild(RoScMenu);
+          //Right-click Rotate/Scale
+          var RoScMenu = new MenuItem({
+            label: "Rotate/Scale",
+            onClick: function () {
+              editToolbar.activate(Edit.ROTATE | Edit.SCALE, selected);
+            }
+          })
+          //ctxMenuForGraphics.addChild(RoScMenu);
       
-      var LatLongMenu = new MenuItem({
-                label: "Add Lat/Long",
-                onClick: function () {
-          var mapPoint =  selected.geometry;
-          var locPoint = webMercatorUtils.webMercatorToGeographic(mapPoint);
-          var lat =  number.format(locPoint.y,{places:5});
-          var longi =  number.format(locPoint.x,{places:5});
-          var textSymbol = new TextSymbol(
-          "Lat: " + (lat) + ", Long: "  + (longi)).setColor(
-          new Color(newColor)).setAlign(Font.ALIGN_MIDDLE).setAngle(0).setDecoration(underline).setOffset(5, 5).setFont(
-          new Font(myFont).setWeight(bold).setStyle(italic));
-          var labelPointGraphic = new Graphic(locPoint, textSymbol);
-          map.graphics.add(labelPointGraphic);
-                }
-            })
+          var LatLongMenu = new MenuItem({
+            label: "Add Lat/Long",
+            onClick: function () {
+              var mapPoint =  selected.geometry;
+              var locPoint = webMercatorUtils.webMercatorToGeographic(mapPoint);
+              var lat =  number.format(locPoint.y,{places:5});
+              var longi =  number.format(locPoint.x,{places:5});
+              var textSymbol = new TextSymbol(
+                "Lat: " + (lat) + ", Long: "  + (longi)).setColor(
+              new Color(newColor)).setAlign(Font.ALIGN_MIDDLE).setAngle(0).setDecoration(underline).setOffset(5, 5).setFont(
+              new Font(myFont).setWeight(bold).setStyle(italic));
+              var labelPointGraphic = new Graphic(locPoint, textSymbol);
+              map.graphics.add(labelPointGraphic);
+            }
+          })
       
-      ctxMenuForGraphics.addChild(LatLongMenu);
+          ctxMenuForGraphics.addChild(LatLongMenu);
 
-      // Right-click Buffer
-      // var BuffPop = new HorizontalSlider({
-      // name:"slider",
-      // id:"BuffPop",
-      // value: 0,
-      // minimum: 0,
-      // maximum: 100,
-      // style: "width: 150px",
-      // onChange: function(val){
-      //   console.log(val)
-      //   }
-      // });
-
-      // var BuffMenu = new PopupMenuItem({
-      //   label: "Buffer (Feet)",
-      //   popup: BuffPop
-      //       });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-      //Right-click Transparency
-      var TransPop = new HorizontalSlider({
-    name:"slider",
-    id:"TransPop",
-    value: 0,
-    minimum: 0,
-    maximum: 0.99,
-    style: "width:150px",
-    onChange: function(val){
-      var TransVal2 = 1 - val;
-      var rt = selected.symbol.color.r;
-      var gt = selected.symbol.color.g;
-      var bt = selected.symbol.color.b;
-      var newColor2 = [rt,gt,bt,TransVal2];
-      if (selected.geometry.type == "polygon"){
-        if (selected.symbol.style == "solid"){
-          symbolfill2 = SimpleFillSymbol.STYLE_SOLID;
-        } else {
-          symbolfill2 = SimpleFillSymbol.STYLE_NULL;
-        }
-          var myNumberpoly = selected.symbol.outline.width;
-          var symbol2= new SimpleFillSymbol(symbolfill2, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
-          new Color(newColor2), myNumberpoly), new Color(newColor2));
-          selected.setSymbol(symbol2);
-        } else if (selected.symbol.type == "textsymbol"){
-          var TextAngle = selected.symbol.angle;
-          var SelText = selected.symbol.text;
-          var symbol2 = new TextSymbol(SelText).setColor(
-          new Color(newColor2)).setAlign(Font.ALIGN_START).setAngle(0).setDecoration(underline).setFont(
-          new Font(myFont).setWeight(bold).setStyle(italic));
-          symbol2.setAngle(TextAngle);
-          selected.setSymbol(symbol2);
-        } else if (selected.geometry.type == "polyline"){
-          var myNumberline = selected.symbol.width;
-          var symbol2= new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color(newColor2), myNumberline);
-          selected.setSymbol(symbol2);
-        } else if (selected.symbol.style == "circle"){
-          var myNumberpoint = selected.symbol.size;
-          var symbol2 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, myNumberpoint,
-          new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color(newColor2), 1), new Color(newColor2));
-          selected.setSymbol(symbol2);
-        }
-    }
-      });
+          //Right-click Transparency
+          var TransPop = new HorizontalSlider({
+            name:"slider",
+            id:"TransPop",
+            value: 0,
+            minimum: 0,
+            maximum: 0.99,
+            style: "width:150px",
+            onChange: function(val){
+              var TransVal2 = 1 - val;
+              var rt = selected.symbol.color.r;
+              var gt = selected.symbol.color.g;
+              var bt = selected.symbol.color.b;
+              var newColor2 = [rt,gt,bt,TransVal2];
+              if (selected.geometry.type == "polygon"){
+              if (selected.symbol.style == "solid"){
+                symbolfill2 = SimpleFillSymbol.STYLE_SOLID;
+              } else {
+                symbolfill2 = SimpleFillSymbol.STYLE_NULL;
+              }
+                var myNumberpoly = selected.symbol.outline.width;
+                var symbol2= new SimpleFillSymbol(symbolfill2, new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                new Color(newColor2), myNumberpoly), new Color(newColor2));
+                selected.setSymbol(symbol2);
+              } else if (selected.symbol.type == "textsymbol"){
+                var TextAngle = selected.symbol.angle;
+                var SelText = selected.symbol.text;
+                var symbol2 = new TextSymbol(SelText).setColor(
+                new Color(newColor2)).setAlign(Font.ALIGN_START).setAngle(0).setDecoration(underline).setFont(
+                new Font(myFont).setWeight(bold).setStyle(italic));
+                symbol2.setAngle(TextAngle);
+                selected.setSymbol(symbol2);
+              } else if (selected.geometry.type == "polyline"){
+                var myNumberline = selected.symbol.width;
+                var symbol2= new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color(newColor2), myNumberline);
+                selected.setSymbol(symbol2);
+              } else if (selected.symbol.style == "circle"){
+                var myNumberpoint = selected.symbol.size;
+                var symbol2 = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, myNumberpoint,
+                new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color(newColor2), 1), new Color(newColor2));
+                selected.setSymbol(symbol2);
+              }
+            }
+          });
     
-      var TransMenu = new PopupMenuItem({
-                label: "Transparency",
-    popup: TransPop
-            })
-      //ctxMenuForGraphics.addChild(TransMenu);
+          var TransMenu = new PopupMenuItem({
+            label: "Transparency",
+            popup: TransPop
+          })
+          //ctxMenuForGraphics.addChild(TransMenu);
       
-      //Right-click Measurement
-      var ss = new Select({
-    name: "select2",
-    options: [
-      { label: "Select Measurement", value: "SELECT", selected: true  },
-      { label: "Feet", value: "FEET"},
-      { label: "Miles", value: "MILES"},
-      { label: "Meters", value: "METERS" },
-      { label: "Kilometers", value: "KILO" },
-      { label: "Yards", value: "YARDS" }
-    ]
-      })
-      ss.startup();
+          //Right-click Measurement
+          var ss = new Select({
+            name: "select2",
+            options: [
+              { label: "Select Measurement", value: "SELECT", selected: true  },
+              { label: "Feet", value: "FEET"},
+              { label: "Miles", value: "MILES"},
+              { label: "Meters", value: "METERS" },
+              { label: "Kilometers", value: "KILO" },
+              { label: "Yards", value: "YARDS" }
+            ]
+          })
+          ss.startup();
     
-      ss.on("change", function(evt){
-        measureUnit = evt;
-        if (evt == "FEET"){
-          Unit_Area = GeometryService.UNIT_SQUARE_FEET;
-          Unit_Line = GeometryService.UNIT_FOOT;
-          Unit_A_Label = " sq. feet";
-          Unit_L_Label = " feet";
-        } else if (evt == "MILES") {
-          Unit_Area = GeometryService.UNIT_SQUARE_MILES;
-          Unit_Line = GeometryService.UNIT_STATUTE_MILE;
-          Unit_A_Label = " sq. miles";
-          Unit_L_Label = " miles";
-        } else if (evt == "METERS") {
-          Unit_Area = GeometryService.UNIT_SQUARE_METERS;
-          Unit_Line = GeometryService.UNIT_METER;
-          Unit_A_Label = " sq. meters";
-          Unit_L_Label = " meters";
-        } else if (evt == "KILO") {
-          Unit_Area = GeometryService.UNIT_SQUARE_KILOMETERS;
-          Unit_Line = GeometryService.UNIT_KILOMETER;
-          Unit_A_Label = " sq. kilometers";
-          Unit_L_Label = " kilometers";
-        } else if (evt == "YARDS") {
-          Unit_Area = GeometryService.UNIT_SQUARE_YARDS;
-          Unit_Line = GeometryService.UNIT_STATUTE_MILE;
-          Unit_A_Label = " sq. yards";
-          Unit_L_Label = " yards";
-        } else {
-          return;
-        }
-          newColor = selected.symbol.color;         
-        if (selected.geometry.type == "point"){
-          var mapPoint =  selected.geometry;
-          var locPoint = webMercatorUtils.webMercatorToGeographic(mapPoint);
-          var lat =  number.format(locPoint.y,{places:5});
-          var longi =  number.format(locPoint.x,{places:5});
-          var textSymbol = new TextSymbol(
-          "Lat: " + (lat) + ", Long: "  + (longi)).setColor(
-          new Color(newColor)).setAlign(Font.ALIGN_MIDDLE).setAngle(0).setDecoration(underline).setOffset(5, 5).setFont(
-          new Font(myFont).setWeight(bold).setStyle(italic));
-          var labelPointGraphic = new Graphic(locPoint, textSymbol);
-          map.graphics.add(labelPointGraphic);    
-        } else if (selected.geometry.type == "polyline") {
-          var lengthParams = new LengthsParameters();
-          lengthParams.lengthUnit = Unit_Line;
-          lengthParams.polylines = [selected.geometry];
-          lengthParams.geodesic = true;
-          map_y = selected.geometry.paths[0][0][1];
-          map_x = selected.geometry.paths[0][0][0];
-          var mapPoint = new Point([map_x,map_y],new SpatialReference({ wkid:102100}) );
-          var locPoint = webMercatorUtils.webMercatorToGeographic(mapPoint);
-          Lat = locPoint.y;
-          Long = locPoint.x;
-          geometryService.lengths(lengthParams);      
-        } else if (selected.geometry.type == "polygon") {
-          if (selected.symbol.style == "solid"){
-            polygonColor = [255,255,255]
-          } else {
-            polygonColor = selected.symbol.color;
-          }
-          var areaParams = new AreasAndLengthsParameters();
-          areaParams.areaUnit = Unit_Area;
-          areaParams.lengthUnit = Unit_Line;
-          areaParams.calculationType = 'geodesic';
-          areaParams.polygons = [selected.geometry];
-          geometryService.simplify(areaParams.polygons, getLabelPoints);
-          geometryService.areasAndLengths(areaParams);
-          ss.set("value", "SELECT");
-        }
-      });
+          ss.on("change", function(evt){
+            measureUnit = evt;
+            if (evt == "FEET"){
+              Unit_Area = GeometryService.UNIT_SQUARE_FEET;
+              Unit_Line = GeometryService.UNIT_FOOT;
+              Unit_A_Label = " sq. feet";
+              Unit_L_Label = " feet";
+            } else if (evt == "MILES") {
+              Unit_Area = GeometryService.UNIT_SQUARE_MILES;
+              Unit_Line = GeometryService.UNIT_STATUTE_MILE;
+              Unit_A_Label = " sq. miles";
+              Unit_L_Label = " miles";
+            } else if (evt == "METERS") {
+              Unit_Area = GeometryService.UNIT_SQUARE_METERS;
+              Unit_Line = GeometryService.UNIT_METER;
+              Unit_A_Label = " sq. meters";
+              Unit_L_Label = " meters";
+            } else if (evt == "KILO") {
+              Unit_Area = GeometryService.UNIT_SQUARE_KILOMETERS;
+              Unit_Line = GeometryService.UNIT_KILOMETER;
+              Unit_A_Label = " sq. kilometers";
+              Unit_L_Label = " kilometers";
+            } else if (evt == "YARDS") {
+              Unit_Area = GeometryService.UNIT_SQUARE_YARDS;
+              Unit_Line = GeometryService.UNIT_STATUTE_MILE;
+              Unit_A_Label = " sq. yards";
+              Unit_L_Label = " yards";
+            } else {
+              return;
+            }
+              newColor = selected.symbol.color;         
+            if (selected.geometry.type == "point"){
+              var mapPoint =  selected.geometry;
+              var locPoint = webMercatorUtils.webMercatorToGeographic(mapPoint);
+              var lat =  number.format(locPoint.y,{places:5});
+              var longi =  number.format(locPoint.x,{places:5});
+              var textSymbol = new TextSymbol(
+              "Lat: " + (lat) + ", Long: "  + (longi)).setColor(
+              new Color(newColor)).setAlign(Font.ALIGN_MIDDLE).setAngle(0).setDecoration(underline).setOffset(5, 5).setFont(
+              new Font(myFont).setWeight(bold).setStyle(italic));
+              var labelPointGraphic = new Graphic(locPoint, textSymbol);
+              map.graphics.add(labelPointGraphic);    
+            } else if (selected.geometry.type == "polyline") {
+              var lengthParams = new LengthsParameters();
+              lengthParams.lengthUnit = Unit_Line;
+              lengthParams.polylines = [selected.geometry];
+              lengthParams.geodesic = true;
+              map_y = selected.geometry.paths[0][0][1];
+              map_x = selected.geometry.paths[0][0][0];
+              var mapPoint = new Point([map_x,map_y],new SpatialReference({ wkid:102100}) );
+              var locPoint = webMercatorUtils.webMercatorToGeographic(mapPoint);
+              Lat = locPoint.y;
+              Long = locPoint.x;
+              geometryService.lengths(lengthParams);      
+            } else if (selected.geometry.type == "polygon") {
+              if (selected.symbol.style == "solid"){
+                polygonColor = [255,255,255]
+              } else {
+                polygonColor = selected.symbol.color;
+              }
+              var areaParams = new AreasAndLengthsParameters();
+              areaParams.areaUnit = Unit_Area;
+              areaParams.lengthUnit = Unit_Line;
+              areaParams.calculationType = 'geodesic';
+              areaParams.polygons = [selected.geometry];
+              geometryService.simplify(areaParams.polygons, getLabelPoints);
+              geometryService.areasAndLengths(areaParams);
+              ss.set("value", "SELECT");
+            }
+          });
       
-    var MeasMenu = new PopupMenuItem({
-      label: "Add Measurement",
-      popup: ss
-    });
-      //ctxMenuForGraphics.addChild(MeasMenu);
+          var MeasMenu = new PopupMenuItem({
+            label: "Add Measurement",
+            popup: ss
+          });
+          //ctxMenuForGraphics.addChild(MeasMenu);
       
-      //Right-click Delete
-      var SepMenu = new MenuSeparator();
-      ctxMenuForGraphics.addChild(SepMenu);
-            var MenuDelete = new MenuItem({
-                label: "Delete",
-                onClick: function () {
-                var operation = new CustomOperation.Add({
+          //Right-click Delete
+          var SepMenu = new MenuSeparator();
+          ctxMenuForGraphics.addChild(SepMenu);
+          var MenuDelete = new MenuItem({
+            label: "Delete",
+            onClick: function () {
+              var operation = new CustomOperation.Add({
                 graphicsLayer: map.graphics,
                 addedGraphic: selected
-                });
-            undoManager.add(operation);
-            undoManager.undo();
-            undoManager.remove(curcount);
-                }
-            });
-      //ctxMenuForGraphics.addChild(MenuDelete);
+              });
+              undoManager.add(operation);
+              undoManager.undo();
+              undoManager.remove(curcount);
+            }
+          });
+          //ctxMenuForGraphics.addChild(MenuDelete);
 
-            ctxMenuForGraphics.startup();
+          ctxMenuForGraphics.startup();
 
-            map.graphics.on("mouse-over", function (evt) {
-                // We'll use this "selected" graphic to enable editing tools
-                // on this graphic when the user click on one of the tools
-                // listed in the menu.
-        ctxMenuForGraphics.addChild(EditMenu);
-        ctxMenuForGraphics.addChild(MoveMenu);
-        ctxMenuForGraphics.addChild(RoScMenu);
-        // ctxMenuForGraphics.addChild(BuffMenu);
-        ctxMenuForGraphics.addChild(TransMenu);
-        ctxMenuForGraphics.addChild(MeasMenu);
-        ctxMenuForGraphics.addChild(SepMenu);
-        ctxMenuForGraphics.addChild(MenuDelete);
-        selected = evt.graphic;
-        SelectedTrans = 1 - selected.symbol.color.a;
-        dijit.byId("TransPop").set("value",SelectedTrans);
-        if (selected.symbol.style == "circle"){
-          ctxMenuForGraphics.removeChild(EditMenu);
-          ctxMenuForGraphics.removeChild(RoScMenu);
-          ctxMenuForGraphics.removeChild(MeasMenu);
-          ctxMenuForGraphics.removeChild(SepMenu);
-          ctxMenuForGraphics.removeChild(TransMenu);
-          ctxMenuForGraphics.removeChild(MenuDelete);
-          ctxMenuForGraphics.removeChild(MoveMenu);
-          ctxMenuForGraphics.addChild(MoveMenu);
-          ctxMenuForGraphics.addChild(LatLongMenu);
-          ctxMenuForGraphics.addChild(TransMenu);
-          ctxMenuForGraphics.addChild(SepMenu);
-          ctxMenuForGraphics.addChild(MenuDelete);
-        } else if (selected.symbol.type == "textsymbol"){
-          ctxMenuForGraphics.removeChild(MeasMenu);
-          ctxMenuForGraphics.removeChild(LatLongMenu);
-        } else {
-          ctxMenuForGraphics.removeChild(LatLongMenu);
-        }
-                //Let's bind to the graphic underneath the mouse cursor           
-                ctxMenuForGraphics.bindDomNode(evt.graphic.getDojoShape().getNode());
-    var cnt = -1;  
-    dojo.forEach(map.graphics.graphics, function(graphicf) {  
-      cnt += 1;  
-      if (graphicf == evt.graphic) {  
-        console.log("Hovered Graphic ID is :" + cnt.toString());
-        curcount = cnt.toString();        
-        return;  
-      }  
-    });    
+          map.graphics.on("mouse-over", function (evt) {
+            // We'll use this "selected" graphic to enable editing tools
+            // on this graphic when the user click on one of the tools
+            // listed in the menu.
+            ctxMenuForGraphics.addChild(EditMenu);
+            ctxMenuForGraphics.addChild(MoveMenu);
+            ctxMenuForGraphics.addChild(RoScMenu);
+            // ctxMenuForGraphics.addChild(BuffMenu);
+            ctxMenuForGraphics.addChild(TransMenu);
+            ctxMenuForGraphics.addChild(MeasMenu);
+            ctxMenuForGraphics.addChild(SepMenu);
+            ctxMenuForGraphics.addChild(MenuDelete);
+            selected = evt.graphic;
+            SelectedTrans = 1 - selected.symbol.color.a;
+            dijit.byId("TransPop").set("value",SelectedTrans);
+            if (selected.symbol.style == "circle"){
+              ctxMenuForGraphics.removeChild(EditMenu);
+              ctxMenuForGraphics.removeChild(RoScMenu);
+              ctxMenuForGraphics.removeChild(MeasMenu);
+              ctxMenuForGraphics.removeChild(SepMenu);
+              ctxMenuForGraphics.removeChild(TransMenu);
+              ctxMenuForGraphics.removeChild(MenuDelete);
+              ctxMenuForGraphics.removeChild(MoveMenu);
+              ctxMenuForGraphics.addChild(MoveMenu);
+              ctxMenuForGraphics.addChild(LatLongMenu);
+              ctxMenuForGraphics.addChild(TransMenu);
+              ctxMenuForGraphics.addChild(SepMenu);
+              ctxMenuForGraphics.addChild(MenuDelete);
+            } else if (selected.symbol.type == "textsymbol"){
+              ctxMenuForGraphics.removeChild(MeasMenu);
+              ctxMenuForGraphics.removeChild(LatLongMenu);
+            } else {
+              ctxMenuForGraphics.removeChild(LatLongMenu);
+            }
+            //Let's bind to the graphic underneath the mouse cursor           
+            ctxMenuForGraphics.bindDomNode(evt.graphic.getDojoShape().getNode());
+            var cnt = -1;  
+            dojo.forEach(map.graphics.graphics, function(graphicf) {  
+              cnt += 1;  
+              if (graphicf == evt.graphic) {  
+                console.log("Hovered Graphic ID is :" + cnt.toString());
+                curcount = cnt.toString();        
+                return;  
+              }  
+            });    
     
-            });
+          });
 
-            map.graphics.on("mouse-out", function (evt) {
-                ctxMenuForGraphics.unBindDomNode(evt.graphic.getDojoShape().getNode());
-            });
+          map.graphics.on("mouse-out", function (evt) {
+            ctxMenuForGraphics.unBindDomNode(evt.graphic.getDojoShape().getNode());
+          });
       
-        }
+        }// Closing bracket for context menu builder
 
         //Helper Methods
         function getMapPointFromMenuPosition(box) {
