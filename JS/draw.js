@@ -862,6 +862,7 @@ var map, editToolbar, ctxMenuForGraphics, ctxMenuForMap, buttonclick;
 
           //setup the buffer parameters
           var params = new BufferParameters();
+          params.geodesic = true;
           params.distances = [ dom.byId("distance").value ];
           params.outSpatialReference = map.spatialReference;
           params.unit = GeometryService[dom.byId("unit").value];

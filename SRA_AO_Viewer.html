@@ -46,17 +46,23 @@
       "esri/WebScene",
       "esri/widgets/LayerList",
       "esri/layers/SceneLayer",
+      "esri/widgets/Home",
+      "esri/renderers/SimpleRenderer",
+      "esri/symbols/PointSymbol3D",
+      "esri/symbols/ObjectSymbol3DLayer",
 
       "dojo/on",
       "dojo/dom",
       "dojo/domReady!"
-    ], function(Map, SceneView, FeatureLayer, WebScene, LayerList, SceneLayer, on, dom) {
+    ], function(Map, SceneView, FeatureLayer, WebScene, LayerList, SceneLayer, Home, SimpleRenderer, PointSymbol3D, ObjectSymbol3DLayer, on, dom) {
 
       // Create the Map
       var map = new Map({
         basemap: "satellite",
         ground: "world-elevation"
       });
+
+
 
       //https://developers.arcgis.com/javascript/latest/sample-code/sandbox/index.html?sample=webscene-basic
 
@@ -76,6 +82,15 @@
           tilt: 0
         }
       });
+
+      var homeBtn = new Home({
+        view: view
+      });
+
+      
+
+      // Add the home button to the top left corner of the view
+      view.ui.add(homeBtn, "top-left");
 
       // Create FeatureLayer, set the elevation mode and add to the map
       var AOs = new FeatureLayer({
