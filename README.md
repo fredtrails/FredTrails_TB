@@ -28,3 +28,8 @@ try to get aerial obstructions as cylinders
 # Write up
 
 Mention limits on visualaztions - use a table
+
+# Timeline for deliverables
+
+prez around July 6/7th
+final paper/ revisions by end of July
