@@ -22,3 +22,9 @@ This project has three components:
 # To Do List
 get noise contours from Ed - have a noise planner tool
 
+try to get aerial obstructions as cylinders
+
+
+# Write up
+
+Mention limits on visualaztions - use a table
