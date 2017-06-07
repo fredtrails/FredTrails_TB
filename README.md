@@ -16,7 +16,8 @@ This project has three components:
 	AutoDesk 360 (http://a360.co/2qFQapa)
 
 # Live Site
-[Click to view]: https://chrispy90.github.io/SRA_Capstone/
+
+[Click to view](https://chrispy90.github.io/SRA_Capstone)
 
 # To Do List
 get noise contours from Ed - have a noise planner tool
