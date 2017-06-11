@@ -48,6 +48,7 @@
 		"esri/layers/ArcGISDynamicMapServiceLayer",
 		"esri/dijit/Search",
 		"esri/dijit/BasemapToggle",
+    "esri/dijit/HomeButton",
 
 		"esri/dijit/Popup",
         "esri/dijit/PopupTemplate",
@@ -72,7 +73,7 @@
         Draw, query, normalizeUtils,
         Editor, TemplatePicker, LayerList, arcgisUtils,
         urlUtils, Measurement, ArcGISDynamicMapServiceLayer,
-        Search, BasemapToggle, Popup, PopupTemplate, registry,
+        Search, BasemapToggle, HomeButton, Popup, PopupTemplate, registry,
         esriConfig, jsapiBundle,
         arrayUtils, parser, keys, ContentPane, AccordionContainer
       ) {
@@ -324,6 +325,10 @@
 	      }, "BasemapToggle");
 	      toggle.startup();
 
+        var home = new HomeButton({
+        map: map
+      }, "HomeButton");
+      home.startup();
 
 
       });
@@ -474,7 +479,8 @@
     <!-- The Dojo center section of the webpage that holds the map and it's widgets -->  
     <div data-dojo-type="dijit/layout/ContentPane" id="mapDiv" data-dojo-props="region:'center'" style="background-color: green; padding: 0">
       	<div id="search"></div>
-      	<div id="BasemapToggle"></div>      	
+      	<div id="BasemapToggle"></div>  
+        <div id="HomeButton"></div>    	
       	<div id="map" style="width: 100%; height: 100%; padding: 0;"></div>
     </div>
 </div>
