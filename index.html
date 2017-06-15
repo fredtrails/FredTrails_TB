@@ -221,6 +221,23 @@
             description: "Height: 12 Feet<br>Material: Chain Linked"
           });
 
+        // Popup template for Noise survey layer
+        var noise_popup = new PopupTemplate({
+            title: "Noise Complaint",
+            fieldInfos: [
+              {
+                fieldName: "CreationDate",
+                visible: true,
+                label: "Timestamp:"
+              },
+              {
+                fieldName: "field_3",
+                visible: true,
+                label: "Description:"
+              },
+              ],
+          });
+
          // SRA Runway layer
 	    var runway = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Runway/FeatureServer/0",{
 			mode: FeatureLayer.MODE_ONDEMAND, 
@@ -252,13 +269,6 @@
 			outFields: ['*']
 		});
 
-	    var issues = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/survey123_3ce3df673f9b431ea009efeb3ceab69f/FeatureServer/0",{
-			mode: FeatureLayer.MODE_ONDEMAND, 
-			id: "Hot Fix Needed",
-			infoTemplate: needs_work_popup,
-			outFields: ['*']
-		});
-
 		var fuel = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Wet_Fuel_Storage/FeatureServer/0",{
 			mode: FeatureLayer.MODE_ONDEMAND, 
 			id: "Wet Fuel Storage",
@@ -266,6 +276,8 @@
 			outFields: ['*']
 		});
 
+    // Mobile App Layers
+    // Workforce
 		var assignments = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/assignments_5d191713b63a41caa404abb03e259931/FeatureServer/0",{
 			mode: FeatureLayer.MODE_ONDEMAND, 
 			id: "Assignments",
@@ -273,6 +285,23 @@
 			outFields: ['*']
 
 		});
+
+    // Survey
+    var noise = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/survey123_133eb4b36d784f06a0f6ddfef527a560/FeatureServer/0",{
+      mode: FeatureLayer.MODE_ONDEMAND, 
+      id: "Noise",
+      infoTemplate: noise_popup,
+      outFields: ['*']
+
+    });
+
+
+    var issues = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/survey123_3ce3df673f9b431ea009efeb3ceab69f/FeatureServer/0",{
+      mode: FeatureLayer.MODE_ONDEMAND, 
+      id: "Hot Fix Needed",
+      infoTemplate: needs_work_popup,
+      outFields: ['*']
+    });
 
 		
 
@@ -282,13 +311,14 @@
         });
 	    
 
-	    map.addLayers([runway, taxi, fence, buildings, fuel, issues, traffic, assignments]);
+	    map.addLayers([runway, taxi, fence, buildings, fuel, issues, noise, traffic, assignments]);
 
 	    // Isolate basemap layer so we can rename it for the layer list widget
 	    var bmLayerID = map.getLayer(map.layerIds[0]);
+      
 
 	    // Layer list object for ListLayer widget
-		var LL = [{layer: bmLayerID, id:"Basemap"},{layer: runway},{layer: fence},{layer: buildings},{layer: issues}, {layer: fuel}, {layer: assignments}, {layer: taxi}];
+		var LL = [{layer: bmLayerID, id:"Basemap"},{layer: runway},{layer: fence, title:"Fence Line"},{layer: buildings, title:"Buildings"},{layer: issues, title:"Hot Fix Needed"},{layer: noise, title:"Noise Complaints"}, {layer: fuel}, {layer: assignments, title:"Workforce Assignments"}, {layer: taxi, title:"Taxiways"}];
 
 		// Layer List Widget
 		var trafficWiget = new LayerList({
