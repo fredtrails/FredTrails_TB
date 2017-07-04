@@ -1,5 +1,6 @@
 # SRA_Capstone
 Stafford Regional Airport Capstone
+All data used for this project is for demonstration purposes only. It does not reflect actual conditions at Staffor Regional Airport. 
 
 # Layout
 This project has three components:
@@ -12,24 +13,16 @@ This project has three components:
 3. AO Viewer (SRA_AO_Viewer.html)
 	..* ArcGIS Javascript v4.3
 
-4. CAD viewer 
+4. CAD Viewer 
 	AutoDesk 360 (http://a360.co/2qFQapa)
 
 # Live Site
 
 [Click to view](https://chrispy90.github.io/SRA_Capstone)
 
-# To Do List
-get noise contours from Ed - have a noise planner tool
+# Story Map
 
-try to get aerial obstructions as cylinders
+[Click to view](http://umw.maps.arcgis.com/apps/MapJournal/index.html?appid=fe13dee230a54c678f53590887a2f27d)
 
 
-# Write up
 
-Mention limits on visualaztions - use a table
-
-# Timeline for deliverables
-
-prez around July 6/7th
-final paper/ revisions by end of July
