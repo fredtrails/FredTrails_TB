@@ -1,6 +1,6 @@
 # SRA_Capstone
 Stafford Regional Airport Capstone
-All data used for this project is for demonstration purposes only. It does not reflect actual conditions at Staffor Regional Airport. 
+All data used for this project is for demonstration purposes only. It does not reflect actual conditions at Stafford Regional Airport. 
 
 # Layout
 This project has three components:
