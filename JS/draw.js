@@ -68,9 +68,9 @@ var map, editToolbar, ctxMenuForGraphics, ctxMenuForMap, buttonclick;
 
     
         map = new Map("map", {
-          basemap: "hybrid",
-          center: [-77.455093,38.398820],
-          zoom: 15
+          basemap: "topo",
+          center: [-77.524291,38.320354],
+          zoom: 14
         });
 
         //On Load function/////////////////////////////////////////////

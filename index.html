@@ -85,224 +85,24 @@
          };
 
         //create a popup to replace the map's info window
-        var popup = new Popup(popupOptions, domConstruct.create("div"));
+        var popup = new Popup(popupOptions, domConstruct.create("div"));    
         
 
-        // Popup template for assignments
-        var assignment_popup = new PopupTemplate({
-            title: "Assignment Information",
-            fieldInfos: [
-              {
-                fieldName: "description",
-                visible: true,
-                label: "Description"
-              },
-              {
-                fieldName: "priority",
-                visible: true,
-                label: "Priority"
-              },
-              {
-                fieldName: "assignmentType",
-                visible: true,
-                label: "Assignment Type "
-              },
-              ],            
-            showAttachments: true
+
+        // Popup template for quarry layer
+        var quarry_popup = new PopupTemplate({
+            title: "Quarry Trail",
+            description: "Write up description for Quarry trail"
           });
 
-        // Popup template for building layer
-        var building_popup = new PopupTemplate({
-            title: "Building Information",
-            fieldInfos: [
-              {
-                fieldName: "BuildingName",
-                visible: true,
-                label: "Building Name"
-              },
-              {
-                fieldName: "Leasee",
-                visible: true,
-                label: "Leasee"
-              },
-              {
-                fieldName: "LeaseeContact",
-                visible: true,
-                label: "Leasee Contact"
-              },
-              {
-                fieldName: "PrimaryUse",
-                visible: true,
-                label: "Primary Use"
-              },
-              ],            
-            showAttachments: true
-          });
-
-        // Popup template for Need work survey layer
-        var needs_work_popup = new PopupTemplate({
-            title: "Hot fix Needed",
-            fieldInfos: [
-              {
-                fieldName: "Creator",
-                visible: true,
-                label: "Issue found by"
-              },
-              {
-                fieldName: "field_5",
-                visible: true,
-                label: "Issue"
-              },
-              {
-                fieldName: "field_3",
-                visible: true,
-                label: "Priority"
-              },
-              {
-                fieldName: "field_2",
-                visible: true,
-                label: "Issue Description"
-              },
-              {
-                fieldName: "field_1",
-                visible: true,
-                label: "Logged Date"
-              },
-              ],            
-            showAttachments: true
-          });
-
-
-        // Popup template for runway layer
-        var runway_popup = new PopupTemplate({
-            title: "Runway Information",
-            description: "Runway Designator: 15/33<br>Surface material: Asphalt<br>Dimensions: 1000'x100'<br><a href='https://airnav.com/airport/RMN' target='_blank'>Airport Information</a>"
-          });
-
-        // Popup template for taxiway layer
-        var taxi_popup = new PopupTemplate({
-            title: "Taxiway Information",
-            description: "Surface Material: Asphalt and concrete"
-          });
-
-
-
-         // Popup template for Fuel layer
-         var fuel_popup = new PopupTemplate({
-            title: "Fuel Tank Information",
-            fieldInfos: [
-              {
-                fieldName: "Fuel_type",
-                visible: true,
-                label: "Fuel Type"
-              },
-              {
-                fieldName: "Capacity_in_gallons",
-                visible: true,
-                label: "Capacity in gallons"
-              },
-              {
-                fieldName: "Last_refuel_date",
-                visible: true,
-                label: "Last refuel date"
-              },
-              {
-                fieldName: "last_inspection",
-                visible: true,
-                label: "Last inspection date"
-              },
-              ],            
-            
-          });
-
-        // Popup template for fence layer
-        var Fence_popup = new PopupTemplate({
-            title: "Fence Line",
-            description: "Height: 12 Feet<br>Material: Chain Linked"
-          });
-
-        // Popup template for Noise survey layer
-        var noise_popup = new PopupTemplate({
-            title: "Noise Complaint",
-            fieldInfos: [
-              {
-                fieldName: "CreationDate",
-                visible: true,
-                label: "Timestamp:"
-              },
-              {
-                fieldName: "field_3",
-                visible: true,
-                label: "Description:"
-              },
-              ],
-          });
-
-         // SRA Runway layer
-	    var runway = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Runway/FeatureServer/0",{
+        
+         // Quarry layer
+	    var quarry = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/FredTrails/FeatureServer/1",{
 			mode: FeatureLayer.MODE_ONDEMAND, 
-			id: "Runway",
-			infoTemplate: runway_popup,
+			id: "Quarry Trail System",
+			infoTemplate: quarry_popup,
 			outFields: ['*']
-		});
-
-		 // SRA Taxiway layer
-	    var taxi = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/TaxiwayIntersection/FeatureServer/0",{
-			mode: FeatureLayer.MODE_ONDEMAND, 
-			id: "Taxiway",
-			infoTemplate: taxi_popup,
-			outFields: ['*']
-		});
-
-
-	    var fence = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/SRA_Fence_Line/FeatureServer/0",{
-			mode: FeatureLayer.MODE_ONDEMAND, 
-			infoTemplate: Fence_popup,
-			id: "Fence Line",
-			outFields: ['*']
-		});
-
-	    var buildings = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/SRA_Buildings/FeatureServer/0",{
-			mode: FeatureLayer.MODE_ONDEMAND, 
-			infoTemplate: building_popup,
-			id: "Buildings",
-			outFields: ['*']
-		});
-
-		var fuel = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Wet_Fuel_Storage/FeatureServer/0",{
-			mode: FeatureLayer.MODE_ONDEMAND, 
-			id: "Wet Fuel Storage",
-			infoTemplate: fuel_popup,
-			outFields: ['*']
-		});
-
-    // Mobile App Layers
-    // Workforce
-		var assignments = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/assignments_5d191713b63a41caa404abb03e259931/FeatureServer/0",{
-			mode: FeatureLayer.MODE_ONDEMAND, 
-			id: "Assignments",
-			infoTemplate: assignment_popup,
-			outFields: ['*']
-
-		});
-
-    // Survey
-    var noise = new FeatureLayer("http://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/survey123_133eb4b36d784f06a0f6ddfef527a560/FeatureServer/0",{
-      mode: FeatureLayer.MODE_ONDEMAND, 
-      id: "Noise",
-      infoTemplate: noise_popup,
-      outFields: ['*']
-
-    });
-
-
-    var issues = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/survey123_3ce3df673f9b431ea009efeb3ceab69f/FeatureServer/0",{
-      mode: FeatureLayer.MODE_ONDEMAND, 
-      id: "Hot Fix Needed",
-      infoTemplate: needs_work_popup,
-      outFields: ['*']
-    });
-
+		});    
 		
 
 		var traffic = new ArcGISDynamicMapServiceLayer("http://utility.arcgis.com/usrsvcs/servers/8cd01a89cdc74c87893127f4438844b5/rest/services/World/Traffic/MapServer", {
@@ -311,14 +111,14 @@
         });
 	    
 
-	    map.addLayers([runway, taxi, fence, buildings, fuel, issues, noise, traffic, assignments]);
+	    map.addLayers([quarry, traffic]);
 
 	    // Isolate basemap layer so we can rename it for the layer list widget
 	    var bmLayerID = map.getLayer(map.layerIds[0]);
       
 
 	    // Layer list object for ListLayer widget
-		var LL = [{layer: bmLayerID, id:"Basemap"},{layer: runway},{layer: fence, title:"Fence Line"},{layer: buildings, title:"Buildings"},{layer: issues, title:"Hot Fix Needed"},{layer: noise, title:"Noise Complaints"}, {layer: fuel}, {layer: assignments, title:"Workforce Assignments"}, {layer: taxi, title:"Taxiways"}];
+		var LL = [{layer: bmLayerID, id:"Basemap"},{layer: quarry, title:"Current Trail System"}];
 
 		// Layer List Widget
 		var trafficWiget = new LayerList({
@@ -351,7 +151,7 @@
 
          var toggle = new BasemapToggle({
 	        map: map,
-	        basemap: "topo"
+	        basemap: "satellite"
 	      }, "BasemapToggle");
 	      toggle.startup();
 
@@ -373,7 +173,8 @@
       <!-- The Dojo Header section of the webpage -->
       <div data-dojo-type="dijit/layout/ContentPane" id="header" data-dojo-props="region:'top'" style="background-color: #f2f0e4; color: black; height: 65px; padding: 0">
        	<a href="http://fredtrails.org/" target="_blank">
-        	<img src="Assets/FT_Logo.png">
+        	<!--<img src="Assets/FT_Logo_Small.png">-->
+          <br><br>
         </a>
         Trail Management System
       </div>
@@ -386,15 +187,15 @@
 
 		<!-- The Accordian section that holds the weather and traffic and links to the mobile apps -->
 	        <div data-dojo-type="dijit/layout/ContentPane" title="Weather Conditions & Traffic" selected="true">
-	            <iframe id="forecast_embed" type="text/html" frameborder="0" height="180"
+	            <iframe id="forecast_embed" type="text/html" frameborder="0" height="200"
 					width="100%"
-					src="https://forecast.io/embed/#lat=38.398820&lon=-77.455093&name=Stafford Airport">
+					src="https://forecast.io/embed/#lat=38.320354&lon=-77.524291&name=Fredericksburg, VA">
 				</iframe>    
 	            <br><br>
 	            <div id="trafficWigetDiv"></div>
 	            <br></br>
-	            <span style="font-weight: bold; font-size: 13pt">Mobile Application Management</span> 
-	            <br></br>
+	            <!--<span style="font-weight: bold; font-size: 13pt">Mobile Application Management</span> 
+	            <br></br> -->
 	        </div>
 
 	        <!-- The Accordian section that holds the map layers -->
