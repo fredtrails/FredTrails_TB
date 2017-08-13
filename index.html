@@ -95,6 +95,35 @@
             description: "Write up description for Quarry trail"
           });
 
+        // Popup template for quarry layer
+        var issues_popup = new PopupTemplate({
+            title: "Quarry Trail Issues",
+            fieldInfos: [
+              {
+                fieldName: "field_0",
+                visible: true,
+                label: "Issue Category: "
+              },
+              {
+                fieldName: "field_0_other",
+                visible: true,
+                label: "Issue Category Other: "
+              },
+              {
+                fieldName: "field_1",
+                visible: true,
+                label: "Description of Issue: "
+              },
+              {
+                fieldName: "CreationDate",
+                visible: true,
+                label: "Time Stamp: "
+              },
+              ],
+              showAttachments: true
+            
+          });
+
         
          // Quarry layer
 	    var quarry = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/FredTrails/FeatureServer/1",{
@@ -102,7 +131,15 @@
 			id: "Quarry Trail System",
 			infoTemplate: quarry_popup,
 			outFields: ['*']
-		});    
+		});  
+
+      // Trail issues
+    var TrailIssues = new FeatureLayer("https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/survey123_4aef5b911fd64b3897c19fe2d8bb2357/FeatureServer/0",{
+      mode: FeatureLayer.MODE_ONDEMAND, 
+      id: "Quarry Trail Issues",
+      infoTemplate: issues_popup,
+      outFields: ['*']
+    });      
 		
 
 		var traffic = new ArcGISDynamicMapServiceLayer("http://utility.arcgis.com/usrsvcs/servers/8cd01a89cdc74c87893127f4438844b5/rest/services/World/Traffic/MapServer", {
@@ -111,14 +148,14 @@
         });
 	    
 
-	    map.addLayers([quarry, traffic]);
+	    map.addLayers([quarry, TrailIssues, traffic]);
 
 	    // Isolate basemap layer so we can rename it for the layer list widget
 	    var bmLayerID = map.getLayer(map.layerIds[0]);
       
 
 	    // Layer list object for ListLayer widget
-		var LL = [{layer: bmLayerID, id:"Basemap"},{layer: quarry, title:"Current Trail System"}];
+		var LL = [{layer: bmLayerID, id:"Basemap"},{layer: quarry, title:"Current Trail System"},{layer: TrailIssues, title:"Trail issues"}];
 
 		// Layer List Widget
 		var trafficWiget = new LayerList({
@@ -171,7 +208,7 @@
     <div id="main" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'headline'" style="height:width:100%;height:100%">
 
       <!-- The Dojo Header section of the webpage -->
-      <div data-dojo-type="dijit/layout/ContentPane" id="header" data-dojo-props="region:'top'" style="background-color: #f2f0e4; color: black; height: 78px; padding: 0">
+      <div data-dojo-type="dijit/layout/ContentPane" id="header" data-dojo-props="region:'top'" style="background-color: #f2f0e4; color: black; height: 82px; padding: 0">
        	<a href="http://fredtrails.org/" target="_blank">
         	<img src="Assets/FT_Logo_small.png"> 
         </a><span style="font-size: 30pt">Fred</span><span style="font-size: 30pt; font-weight: normal">Trails</span>
@@ -193,8 +230,12 @@
 	            <br><br>
 	            <div id="trafficWigetDiv"></div>
 	            <br></br>
-	            <!--<span style="font-weight: bold; font-size: 13pt">Mobile Application Management</span> 
-	            <br></br> -->
+	            <span style="font-weight: bold; font-size: 13pt">Help us track issues on the trails!</span> 
+	            <br></br> 
+              <button  type="button">
+                  <a class="suvButt" href="https://survey123.arcgis.com/share/4aef5b911fd64b3897c19fe2d8bb2357?open=menu" target="blank">FredTrails Issue Tracker</a>
+              </button>
+              
 	        </div>
 
 	        <!-- The Accordian section that holds the map layers -->

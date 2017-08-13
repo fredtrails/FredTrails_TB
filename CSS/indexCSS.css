@@ -12,14 +12,13 @@ html,body{height:100%;width:100%;margin:0;overflow:hidden}
     }
   
   #header{
-    font-size: 1.3em;
+    font-size: 14pt;
     font-family: sans-serif;
-    padding-left: 1em;
-    padding-top:4px;
     color: white;
     background-color: green;
     font-weight: bold;
     text-align: center;
+    padding-bottom: 4px
   }
   .templatePicker {
     border: none;
@@ -78,4 +77,9 @@ position: absolute;
     display:block
 
   }
+}
+
+.suvButt{
+  font-weight: normal;
+  font-size: 20pt
 }
